@@ -24,7 +24,7 @@ func _ready() -> void:
 	_root.hide()
 	_panel.hide()
  
- 
+	
 func open(merchant_npc, player_node) -> void:
 	merchant = merchant_npc
 	player = player_node
@@ -215,3 +215,5 @@ func _sell(index: int) -> void:
 	print("Sold %s for %d." % [item.display_name, price])
 	_refresh()
  
+func is_open() -> bool:
+	return _root.visible

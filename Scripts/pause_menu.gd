@@ -48,9 +48,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if event.keycode != KEY_ESCAPE:
 		return
-	# combat owns Escape for cancelling targeting and fleeing
 	if Game.in_battle():
 		return
+	if not is_open() and _another_window_open():
+		return          # let that window close itself first
 	toggle()
 	get_viewport().set_input_as_handled()
 
@@ -118,3 +119,10 @@ func _on_pressed(action: String) -> void:
 			get_tree().quit()
 		_:
 			_status.text = "%s isn't implemented yet." % action.capitalize()
+
+func _another_window_open() -> bool:
+	for group in ["character_sheet", "trade_window"]:
+		for node in get_tree().get_nodes_in_group(group):
+			if node.has_method("is_open") and node.is_open():
+				return true
+	return false
