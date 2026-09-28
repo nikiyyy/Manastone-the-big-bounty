@@ -21,7 +21,7 @@ var _points_label: Label
 var _rows: Dictionary = {}           # stat name -> { value: Label, button: Button }
 var _xp_bar: ProgressBar
 var _xp_label: Label
- 
+var _defence_row: HBoxContainer
  
 func _ready() -> void:
 	add_to_group("character_sheet")
@@ -104,7 +104,11 @@ func _build() -> void:
 	_xp_label.add_theme_font_size_override("font_size", 11)
 	_xp_label.modulate = Color(1, 1, 1, 0.65)
 	outer.add_child(_xp_label)
- 
+
+	_defence_row = HBoxContainer.new()
+	_defence_row.add_theme_constant_override("separation", 12)
+	outer.add_child(_defence_row)
+	
 	_party_row = HBoxContainer.new()
 	_party_row.add_theme_constant_override("separation", 8)
 	outer.add_child(_party_row)
@@ -280,10 +284,12 @@ func _refresh() -> void:
  
 	var progress: Dictionary = Progression.progress(xp)
  
-	_header.text = "%s   %s   lvl %d   armor %d   mana %d/%d   %d gold" % [
-		who, klass, progress["level"], armor, mana, mana_max, gold
+	_header.text = "%s   %s   lvl %d   mana %d/%d   %d gold" % [
+		who, klass, progress["level"], mana, mana_max, gold
 	]
- 
+	
+	_rebuild_defences(unit)
+	
 	_xp_bar.max_value = 100.0
 	_xp_bar.value = progress["ratio"] * 100.0
  
@@ -457,3 +463,50 @@ func _paint_portraits() -> void:
 func _on_portrait_pressed(unit) -> void:
 	_selected = unit
 	_refresh()
+
+## Armor and the four elemental resistances, each with its mitigation percent.
+func _rebuild_defences(unit) -> void:
+	for child in _defence_row.get_children():
+		child.queue_free()
+
+	var armor: int = unit.armor() if unit.has_method("armor") else 0
+	_defence_row.add_child(_defence_chip("Armor", armor, Color(0.80, 0.80, 0.84)))
+
+	if not unit.has_method("resistances"):
+		return
+	var res: Resistances = unit.resistances()
+	for element in DamageType.ELEMENTS:
+		_defence_row.add_child(_defence_chip(
+			DamageType.label(element), res.get_for(element), DamageType.color(element)
+		))
+
+
+func _defence_chip(label_text: String, value: int, tint: Color) -> Control:
+	var cut: int = int(round((1.0 - Damage.multiplier(value)) * 100.0))
+
+	var chip := PanelContainer.new()
+	var box := StyleBoxFlat.new()
+	box.bg_color = Color(tint.r, tint.g, tint.b, 0.14)
+	box.set_corner_radius_all(4)
+	box.set_content_margin_all(5)
+	chip.add_theme_stylebox_override("panel", box)
+	chip.tooltip_text = "%s %d — reduces %s damage by %d%%" % [
+		label_text, value, label_text.to_lower(), cut
+	]
+
+	var line := HBoxContainer.new()
+	line.add_theme_constant_override("separation", 5)
+
+	var swatch := ColorRect.new()
+	swatch.custom_minimum_size = Vector2(9, 9)
+	swatch.color = tint
+	swatch.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	line.add_child(swatch)
+
+	var text := Label.new()
+	text.text = "%s %d  (-%d%%)" % [label_text, value, cut]
+	text.add_theme_font_size_override("font_size", 11)
+	line.add_child(text)
+
+	chip.add_child(line)
+	return chip

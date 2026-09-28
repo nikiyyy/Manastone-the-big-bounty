@@ -20,7 +20,19 @@ static func apply_armor(raw: int, armor: int) -> int:
 		return 0
 	return maxi(1, int(ceil(raw * multiplier(armor))))
 
+## Damage after whichever defence applies: armor for physical types,
+## the matching elemental resistance for the rest.
+static func mitigate(raw: int, target, kind: int) -> int:
+	return apply_armor(raw, defence_against(target, kind))
 
+## The defence value that a given damage type is reduced by.
+static func defence_against(target, kind: int) -> int:
+	if target == null:
+		return 0
+	if DamageType.is_elemental(kind):
+		return target.resistance_to(kind) if target.has_method("resistance_to") else 0
+	return armor_of(target)
+	
 static func armor_of(unit) -> int:
 	return unit.armor() if unit != null and unit.has_method("armor") else 0
 ## Crit chance in percent: one point per agility, plus a light weapon's bonus.

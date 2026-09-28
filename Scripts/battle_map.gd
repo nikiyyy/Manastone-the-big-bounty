@@ -640,20 +640,20 @@ func _strike(attacker, target, distance: int) -> void:
 	var long_shot: bool = weapon != null and weapon.is_long_shot(distance)
 	if long_shot:
 		raw = maxi(1, int(raw / 2.0))
- 
-	var armor: int = Damage.armor_of(target)
-	var dealt: int = Damage.apply_armor(raw, armor)
+
 	var kind: int = weapon.damage_type if weapon != null else DamageType.Kind.BLUNT
+	var armor: int = Damage.armor_of(target)
+	var dealt: int = Damage.mitigate(raw, target, kind)
+	var defence: int = Damage.defence_against(target, kind)
 
 	_face_unit(attacker, target)
-	print("%s hits %s for %d %s (raw %d, armor %d)%s%s" % [
+	print("%s hits %s for %d %s (raw %d, defence %d)%s%s" % [
 		_name_of(attacker), _name_of(target), dealt,
-		DamageType.label(kind).to_lower(), raw, armor,
+		DamageType.label(kind).to_lower(), raw, defence,
 		" CRIT" if crit else "",
 		" [long shot]" if long_shot else ""
 	])
 	DamageNumber.spawn(target, dealt, "crit" if crit else ("blocked" if long_shot else "damage"), kind)
-	
 	target.take_damage(dealt)
  
  
@@ -864,9 +864,9 @@ func confirm_cast(world_pos: Vector3) -> bool:
  
 		if spell.deals_damage():
 			var raw: int = power + spell.roll_damage()
-			var dealt: int = Damage.apply_armor(raw, Damage.armor_of(unit))
-			print("  %s takes %d %s" % [
-				_name_of(unit), dealt, DamageType.label(spell.damage_type).to_lower()
+			var dealt: int = Damage.mitigate(raw, unit, spell.damage_type)
+			print("  %s takes %d %s (raw %d)" % [
+				_name_of(unit), dealt, DamageType.label(spell.damage_type).to_lower(), raw
 			])
 			DamageNumber.spawn(unit, dealt, "damage", spell.damage_type)
 			unit.take_damage(dealt)
