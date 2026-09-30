@@ -292,7 +292,7 @@ func add_armor(amount: int) -> void:
 # ---------------------------------------------------------------- health
 
 func max_health() -> int:
-	return stats.health if stats != null else 1
+	return maxi(1, modified_stat("health"))
 
 func take_damage(amount: int) -> void:
 	if current_health <= 0:
@@ -353,7 +353,7 @@ var current_mana: int = 0
 
 
 func max_mana() -> int:
-	return stats.mana_pool if stats != null else 0
+	return maxi(0, modified_stat("mana_pool"))
 
 
 func spend_mana(amount: int) -> bool:
@@ -372,12 +372,16 @@ func restore_mana(amount: int) -> void:
 func class_name_of() -> String:
 	return character_class.display_name if character_class != null else "—"
 
-#effects
-## A stat with active effects layered on. Use this, not stats.get(), anywhere
-## a buff should count.
+## A stat with gear bonuses and active effects layered on. Use this, not
+## stats.get(), anywhere a bonus should count.
 func modified_stat(stat_name: String) -> int:
 	var base: int = stats.get(stat_name) if stats != null else 0
+	base += equipment_bonus(stat_name)
 	return effects.modify(stat_name, base)
+
+
+func equipment_bonus(stat_name: String) -> int:
+	return inventory.total_stat_bonus(stat_name) if inventory != null else 0
 
 
 func add_effect(effect: Effect) -> void:

@@ -303,7 +303,11 @@ func _refresh() -> void:
 	_points_label.text = "Points to spend: %d" % stats.available_points
  
 	for stat_name in Stats.NAMES:
-		_rows[stat_name]["value"].text = str(stats.get(stat_name))
+		var base: int = stats.get(stat_name)
+		var now: int = unit.modified_stat(stat_name) if unit.has_method("modified_stat") else base
+		var cell: Label = _rows[stat_name]["value"]
+		cell.text = str(now) if now == base else "%d (%d)" % [now, base]
+		cell.modulate = Color.WHITE if now == base else Color(0.6, 0.9, 1.0)
 		_rows[stat_name]["button"].disabled = not stats.can_raise()
  
 	var gear: Inventory = unit.inventory if "inventory" in unit else null

@@ -32,6 +32,9 @@ const RARITY_COLORS := {
 @export var crit_bonus: int = 10        ## percentage points, only if light
 @export var damage_type: DamageType.Kind = DamageType.Kind.SLASHING
 
+@export_group("Bonuses")
+@export var stat_bonus: StatBonus
+
 @export_group("Armor")
 @export var armor_bonus: int = 0
 @export var resistances: Resistances
@@ -67,6 +70,9 @@ func tooltip() -> String:
 			var value: int = resistances.get_for(element)
 			if value != 0:
 				lines.append("+%d %s resist" % [value, DamageType.label(element).to_lower()])
+	if stat_bonus != null:
+		for line in stat_bonus.describe():
+			lines.append(line)
 	lines.append("%d gold" % value)
 	return "\n".join(lines)
 

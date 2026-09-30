@@ -1,18 +1,19 @@
 [gd_resource type="Resource" script_class="Item" format=3 uid="uid://cm4t3k0ax2rsi"]
 
+[ext_resource type="Script" uid="uid://cxwuxvpoxrgrf" path="res://Scripts/resistances.gd" id="1_0j4ya"]
 [ext_resource type="Script" uid="uid://30l2ylr7plcx" path="res://Scripts/item.gd" id="1_152om"]
+
+[sub_resource type="Resource" id="Resource_akmg3"]
+script = ExtResource("1_0j4ya")
+fire = 100
+metadata/_custom_type_script = "uid://cxwuxvpoxrgrf"
 
 [resource]
 script = ExtResource("1_152om")
 display_name = "wooden shield"
-description = null
 kind = 1
 slot = 1
-rarity = null
 value = 25
-hands = null
-damage_min = null
-damage_max = null
-reach = null
 armor_bonus = 100
+resistances = SubResource("Resource_akmg3")
 metadata/_custom_type_script = "uid://30l2ylr7plcx"

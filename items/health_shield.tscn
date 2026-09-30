@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://bgbxcxsfunv6n"]
+
+[ext_resource type="PackedScene" uid="uid://c5c3ltt1qcxnk" path="res://scenes/player.tscn" id="1_i1pvl"]
+[ext_resource type="Script" uid="uid://30l2ylr7plcx" path="res://Scripts/item.gd" id="2_2uu5e"]
+[ext_resource type="Resource" uid="uid://cfac5cojiqmvg" path="res://items/simple_sword.tres" id="3_2cqdd"]
+[ext_resource type="Resource" uid="uid://diybmdx7e8mc0" path="res://items/short_bow.tres" id="4_a0mps"]
+[ext_resource type="Resource" uid="uid://cm4t3k0ax2rsi" path="res://items/wooden_shield.tres" id="5_t1uo7"]
+[ext_resource type="Resource" uid="uid://clwk7ohjnr685" path="res://items/greatsword.tres" id="6_7vj6i"]
+[ext_resource type="Resource" uid="uid://b6tenmmv8eww3" path="res://items/fire_shield.tres" id="7_uep5r"]
+[ext_resource type="Script" uid="uid://sns8ro2vulvm" path="res://Scripts/inventory.gd" id="8_3n0kl"]
+
+[sub_resource type="Resource" id="Resource_2sppn"]
+script = ExtResource("8_3n0kl")
+items = Array[ExtResource("2_2uu5e")]([ExtResource("3_2cqdd"), ExtResource("4_a0mps"), ExtResource("5_t1uo7"), ExtResource("6_7vj6i"), ExtResource("7_uep5r")])
+metadata/_custom_type_script = "uid://sns8ro2vulvm"
+
+[node name="HealthShield" type="Node" unique_id=1996816553]
+
+[node name="Player" parent="." unique_id=1841863593 instance=ExtResource("1_i1pvl")]
+inventory = SubResource("Resource_2sppn")

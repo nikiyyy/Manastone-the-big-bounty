@@ -150,3 +150,11 @@ func total_resistances() -> Resistances:
 		for element in DamageType.ELEMENTS:
 			out.add_for(element, item.resistances.get_for(element))
 	return out
+
+## Total flat stat bonus from everything worn.
+func total_stat_bonus(stat_name: String) -> int:
+	var total: int = 0
+	for item in equipped.values():
+		if item.stat_bonus != null:
+			total += item.stat_bonus.get_for(stat_name)
+	return total
