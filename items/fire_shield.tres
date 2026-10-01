@@ -1,7 +1,13 @@
 [gd_resource type="Resource" script_class="Item" format=3 uid="uid://b6tenmmv8eww3"]
 
+[ext_resource type="Script" uid="uid://cxwuxvpoxrgrf" path="res://Scripts/resistances.gd" id="1_ap60a"]
 [ext_resource type="Script" uid="uid://30l2ylr7plcx" path="res://Scripts/item.gd" id="1_wp7do"]
 [ext_resource type="Script" uid="uid://fekjbrvub7ld" path="res://Scripts/stat_bonus.gd" id="2_msxro"]
+
+[sub_resource type="Resource" id="Resource_ohtlu"]
+script = ExtResource("1_ap60a")
+fire = 100
+metadata/_custom_type_script = "uid://cxwuxvpoxrgrf"
 
 [sub_resource type="Resource" id="Resource_msxro"]
 script = ExtResource("2_msxro")
@@ -9,8 +15,11 @@ metadata/_custom_type_script = "uid://fekjbrvub7ld"
 
 [resource]
 script = ExtResource("1_wp7do")
+display_name = "fire shield"
 kind = 1
 slot = 1
 value = 10
 stat_bonus = SubResource("Resource_msxro")
+armor_bonus = 15
+resistances = SubResource("Resource_ohtlu")
 metadata/_custom_type_script = "uid://30l2ylr7plcx"
