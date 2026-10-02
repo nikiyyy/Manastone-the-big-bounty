@@ -7,26 +7,32 @@
 [ext_resource type="Script" uid="uid://uc2jbresri3e" path="res://Scripts/unit_template.gd" id="4_m22rl"]
 [ext_resource type="Script" uid="uid://sns8ro2vulvm" path="res://Scripts/inventory.gd" id="4_r30v4"]
 [ext_resource type="Script" uid="uid://cxwuxvpoxrgrf" path="res://Scripts/resistances.gd" id="5_cg4qs"]
+[ext_resource type="Resource" uid="uid://cttf6b6axue" path="res://classes/wizard.tres" id="6_la4ba"]
+[ext_resource type="Script" uid="uid://cinijcs8mk7ec" path="res://Scripts/combat_ai.gd" id="7_kxl67"]
 [ext_resource type="Resource" uid="uid://cx8br4fv7eyjs" path="res://enemies/prisoner2.tres" id="8_pl87k"]
 [ext_resource type="Resource" uid="uid://dnxbsubqpomky" path="res://classes/warrior.tres" id="8_r30v4"]
 [ext_resource type="Resource" uid="uid://ct1b7mady25h3" path="res://enemies/prisoner1.tres" id="10_cg4qs"]
-
-[sub_resource type="Resource" id="Resource_cg4qs"]
-script = ExtResource("4_r30v4")
-
-[sub_resource type="Resource" id="Resource_fedbm"]
-script = ExtResource("5_cg4qs")
-
-[sub_resource type="Resource" id="Resource_la4ba"]
-script = ExtResource("4_r30v4")
-
-[sub_resource type="Resource" id="Resource_kxl67"]
-script = ExtResource("5_cg4qs")
 
 [sub_resource type="Resource" id="Resource_tn3yd"]
 script = ExtResource("4_r30v4")
 
 [sub_resource type="Resource" id="Resource_3evjc"]
+script = ExtResource("5_cg4qs")
+
+[sub_resource type="Resource" id="Resource_wrdim"]
+script = ExtResource("4_r30v4")
+
+[sub_resource type="Resource" id="Resource_tml4i"]
+script = ExtResource("7_kxl67")
+metadata/_custom_type_script = "uid://cinijcs8mk7ec"
+
+[sub_resource type="Resource" id="Resource_i3btg"]
+script = ExtResource("5_cg4qs")
+
+[sub_resource type="Resource" id="Resource_n7nbc"]
+script = ExtResource("4_r30v4")
+
+[sub_resource type="Resource" id="Resource_au5ld"]
 script = ExtResource("5_cg4qs")
 
 [sub_resource type="Resource" id="Resource_m22rl"]
@@ -35,10 +41,10 @@ health = 5
 haste = 3
 metadata/_custom_type_script = "uid://qlg6oc76b8q2"
 
-[sub_resource type="Resource" id="Resource_wrdim"]
+[sub_resource type="Resource" id="Resource_sl2hr"]
 script = ExtResource("4_r30v4")
 
-[sub_resource type="Resource" id="Resource_i3btg"]
+[sub_resource type="Resource" id="Resource_qdm4t"]
 script = ExtResource("5_cg4qs")
 
 [node name="Overworld" type="Node3D" unique_id=646308099]
@@ -50,21 +56,23 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0034023523, 0, -0.012567997
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.349845, 0.10000038, 5.8358145)
 faction = 0
 display_name = "Bellona"
-inventory = SubResource("Resource_cg4qs")
-base_resistances = SubResource("Resource_fedbm")
+inventory = SubResource("Resource_tn3yd")
+base_resistances = SubResource("Resource_3evjc")
 
 [node name="NPC" parent="NPC" unique_id=1900716751 instance=ExtResource("2_fwfmv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7534189, 0.10000038, -5.2703304)
 faction = 0
 display_name = "Myra"
-inventory = SubResource("Resource_la4ba")
-base_resistances = SubResource("Resource_kxl67")
+character_class = ExtResource("6_la4ba")
+inventory = SubResource("Resource_wrdim")
+ai = SubResource("Resource_tml4i")
+base_resistances = SubResource("Resource_i3btg")
 
 [node name="NPC2" parent="." unique_id=1283164643 instance=ExtResource("2_fwfmv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2593198, 0.09999943, 7.078424)
 display_name = "merchant"
-inventory = SubResource("Resource_tn3yd")
-base_resistances = SubResource("Resource_3evjc")
+inventory = SubResource("Resource_n7nbc")
+base_resistances = SubResource("Resource_au5ld")
 is_merchant = true
 
 [node name="NPC3" parent="." unique_id=677490741 instance=ExtResource("2_fwfmv")]
@@ -73,8 +81,8 @@ faction = 1
 display_name = "Bandit"
 stats = SubResource("Resource_m22rl")
 character_class = ExtResource("8_r30v4")
-inventory = SubResource("Resource_wrdim")
-base_resistances = SubResource("Resource_i3btg")
+inventory = SubResource("Resource_sl2hr")
+base_resistances = SubResource("Resource_qdm4t")
 party = Array[ExtResource("4_m22rl")]([ExtResource("10_cg4qs"), ExtResource("8_pl87k"), ExtResource("10_cg4qs")])
 
 [node name="PlayerSpawn" type="Marker3D" parent="." unique_id=383359081]

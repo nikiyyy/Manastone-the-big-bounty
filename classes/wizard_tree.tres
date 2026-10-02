@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="TalentTree" format=3 uid="uid://dknyjk3xfw06l"]
+
+[ext_resource type="Script" uid="uid://dsneh0etxjpm" path="res://Scripts/talent_tree.gd" id="1_chdvf"]
+[ext_resource type="Script" uid="uid://rvpl1ht4v82" path="res://Scripts/talent.gd" id="2_ppwdw"]
+[ext_resource type="Resource" uid="uid://breya0ceamv74" path="res://talents/wizard_focus.tres" id="3_olc7s"]
+[ext_resource type="Resource" uid="uid://b0osla16f8oky" path="res://talents/wizard_firebolt.tres" id="4_olc7s"]
+
+[resource]
+script = ExtResource("1_chdvf")
+talents = Array[ExtResource("2_ppwdw")]([ExtResource("3_olc7s"), ExtResource("4_olc7s")])
+metadata/_custom_type_script = "uid://dsneh0etxjpm"

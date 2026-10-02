@@ -19,6 +19,7 @@ signal changed_stat(stat_name: String)
 
 @export_group("Progression")
 @export var available_points: int = 5
+@export var talent_points: int = 0
 
 @export_group("Physical")
 @export var strength: int = 1

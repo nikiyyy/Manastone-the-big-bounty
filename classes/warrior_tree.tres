@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="TalentTree" format=3 uid="uid://dfcd301gxx6wx"]
+
+[ext_resource type="Script" uid="uid://dsneh0etxjpm" path="res://Scripts/talent_tree.gd" id="1_c2k75"]
+[ext_resource type="Script" uid="uid://rvpl1ht4v82" path="res://Scripts/talent.gd" id="2_45dw2"]
+[ext_resource type="Resource" uid="uid://6mfiit42h266" path="res://talents/warrior_cleave.tres" id="3_aon8u"]
+[ext_resource type="Resource" uid="uid://b2hlfcdm2hnjk" path="res://talents/warrior_toughness.tres" id="4_pxoop"]
+
+[resource]
+script = ExtResource("1_c2k75")
+display_name = "Arms"
+talents = Array[ExtResource("2_45dw2")]([ExtResource("3_aon8u"), ExtResource("4_pxoop")])
+metadata/_custom_type_script = "uid://dsneh0etxjpm"

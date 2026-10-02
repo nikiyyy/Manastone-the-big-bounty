@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Talent" format=3 uid="uid://6mfiit42h266"]
+
+[ext_resource type="Resource" uid="uid://b2hlfcdm2hnjk" path="res://talents/warrior_toughness.tres" id="1_7eeyw"]
+[ext_resource type="Script" uid="uid://rvpl1ht4v82" path="res://Scripts/talent.gd" id="1_m7noq"]
+
+[resource]
+script = ExtResource("1_m7noq")
+display_name = "Cleave"
+icon_color = Color(0.7167454, 0.45502102, 0.36560002, 1)
+column = 1
+row = 1
+requires = ExtResource("1_7eeyw")
+metadata/_custom_type_script = "uid://rvpl1ht4v82"

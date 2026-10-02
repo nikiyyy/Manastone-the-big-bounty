@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Talent" format=3 uid="uid://breya0ceamv74"]
+
+[ext_resource type="Script" uid="uid://rvpl1ht4v82" path="res://Scripts/talent.gd" id="1_tmdn6"]
+
+[resource]
+script = ExtResource("1_tmdn6")
+max_ranks = 3
+column = 1
+metadata/_custom_type_script = "uid://rvpl1ht4v82"

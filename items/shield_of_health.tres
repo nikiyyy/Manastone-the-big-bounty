@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="Item" format=3 uid="uid://df4t5iubfe51g"]
+
+[ext_resource type="Script" uid="uid://30l2ylr7plcx" path="res://Scripts/item.gd" id="1_mt8yy"]
+[ext_resource type="Script" uid="uid://fekjbrvub7ld" path="res://Scripts/stat_bonus.gd" id="2_djyic"]
+
+[sub_resource type="Resource" id="Resource_mt8yy"]
+script = ExtResource("2_djyic")
+health = 10
+metadata/_custom_type_script = "uid://fekjbrvub7ld"
+
+[resource]
+script = ExtResource("1_mt8yy")
+display_name = "health shield"
+slot = 1
+stat_bonus = SubResource("Resource_mt8yy")
+armor_bonus = 15
+metadata/_custom_type_script = "uid://30l2ylr7plcx"

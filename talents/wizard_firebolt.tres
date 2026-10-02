@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="Talent" format=3 uid="uid://b0osla16f8oky"]
+
+[ext_resource type="Resource" uid="uid://breya0ceamv74" path="res://talents/wizard_focus.tres" id="1_p0cvx"]
+[ext_resource type="Script" uid="uid://rvpl1ht4v82" path="res://Scripts/talent.gd" id="1_y6p7c"]
+
+[resource]
+script = ExtResource("1_y6p7c")
+column = 1
+row = 1
+requires = ExtResource("1_p0cvx")
+metadata/_custom_type_script = "uid://rvpl1ht4v82"

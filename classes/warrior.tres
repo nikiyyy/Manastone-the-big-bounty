@@ -1,9 +1,12 @@
 [gd_resource type="Resource" script_class="CharacterClass" format=3 uid="uid://dnxbsubqpomky"]
 
 [ext_resource type="Script" uid="uid://2a36nxb4v4tx" path="res://Scripts/character_class.gd" id="1_hi70d"]
+[ext_resource type="Script" uid="uid://cfb1dx73mhhsh" path="res://Scripts/spell.gd" id="2_e5mt0"]
+[ext_resource type="Resource" uid="uid://dfcd301gxx6wx" path="res://classes/warrior_tree.tres" id="3_1wpvd"]
 
 [resource]
 script = ExtResource("1_hi70d")
 display_name = "warrior"
 icon_color = Color(0.8, 0, 0, 1)
+talent_tree = ExtResource("3_1wpvd")
 metadata/_custom_type_script = "uid://2a36nxb4v4tx"

@@ -9,6 +9,16 @@ const COLOR_SELECTED := Color(1.0, 0.85, 0.35)
 const INVENTORY_CELLS := 16
 const CELL_SIZE := Vector2(48, 48)
  
+const TAB_STATS := 0
+const TAB_TALENTS := 1
+const TALENT_CELL := 54
+const TALENT_GAP := 22
+ 
+var _tab: int = TAB_STATS
+var _tab_buttons: Array = []
+var _pages: Array = []
+var _talent_root: VBoxContainer
+ 
 var _selected = null
 var _party_row: HBoxContainer
 var _portraits: Dictionary = {}      # unit -> Button
@@ -22,6 +32,7 @@ var _rows: Dictionary = {}           # stat name -> { value: Label, button: Butt
 var _xp_bar: ProgressBar
 var _xp_label: Label
 var _defence_row: HBoxContainer
+ 
  
 func _ready() -> void:
 	add_to_group("character_sheet")
@@ -104,28 +115,61 @@ func _build() -> void:
 	_xp_label.add_theme_font_size_override("font_size", 11)
 	_xp_label.modulate = Color(1, 1, 1, 0.65)
 	outer.add_child(_xp_label)
-
+ 
 	_defence_row = HBoxContainer.new()
 	_defence_row.add_theme_constant_override("separation", 12)
 	outer.add_child(_defence_row)
-	
+ 
 	_party_row = HBoxContainer.new()
 	_party_row.add_theme_constant_override("separation", 8)
 	outer.add_child(_party_row)
  
+	var tabs := HBoxContainer.new()
+	tabs.add_theme_constant_override("separation", 4)
+	outer.add_child(tabs)
+ 
+	for entry in [{"label": "Character", "id": TAB_STATS}, {"label": "Talents", "id": TAB_TALENTS}]:
+		var tab_button := Button.new()
+		tab_button.text = entry["label"]
+		tab_button.custom_minimum_size = Vector2(110, 26)
+		tab_button.add_theme_font_size_override("font_size", 12)
+		tab_button.pressed.connect(_on_tab_pressed.bind(entry["id"]))
+		tabs.add_child(tab_button)
+		_tab_buttons.append(tab_button)
+ 
 	var columns := HBoxContainer.new()
 	columns.add_theme_constant_override("separation", 16)
-	outer.add_child(columns)
- 
 	columns.add_child(_build_stats_panel())
 	columns.add_child(_build_equipment_panel())
 	columns.add_child(_build_inventory_panel())
+	outer.add_child(columns)
+ 
+	_talent_root = VBoxContainer.new()
+	_talent_root.add_theme_constant_override("separation", 8)
+	_talent_root.custom_minimum_size = Vector2(620, 330)
+	outer.add_child(_talent_root)
+ 
+	_pages = [columns, _talent_root]
+	_show_tab(TAB_STATS)
  
 	var hint := Label.new()
 	hint.text = "Tab or Esc to close"
 	hint.add_theme_font_size_override("font_size", 11)
 	hint.modulate = Color(1, 1, 1, 0.5)
 	outer.add_child(hint)
+ 
+ 
+func _on_tab_pressed(id: int) -> void:
+	_show_tab(id)
+	_refresh()
+ 
+ 
+func _show_tab(id: int) -> void:
+	_tab = id
+	for i in _pages.size():
+		_pages[i].visible = (i == id)
+	for i in _tab_buttons.size():
+		_tab_buttons[i].modulate = Color.WHITE if i == id else Color(1, 1, 1, 0.5)
  
  
 func _build_stats_panel() -> Control:
@@ -278,7 +322,6 @@ func _refresh() -> void:
 	var mana: int = unit.current_mana if "current_mana" in unit else 0
 	var mana_max: int = unit.max_mana() if unit.has_method("max_mana") else 0
 	var who: String = unit.display_name if "display_name" in unit else "Unit"
-	var armor: int = unit.armor() if unit.has_method("armor") else 0
 	var gold: int = player.gold if "gold" in player else 0
 	var xp: int = unit.xp if "xp" in unit else 0
  
@@ -287,9 +330,9 @@ func _refresh() -> void:
 	_header.text = "%s   %s   lvl %d   mana %d/%d   %d gold" % [
 		who, klass, progress["level"], mana, mana_max, gold
 	]
-	
+ 
 	_rebuild_defences(unit)
-	
+ 
 	_xp_bar.max_value = 100.0
 	_xp_bar.value = progress["ratio"] * 100.0
  
@@ -321,6 +364,9 @@ func _refresh() -> void:
 			carried = pack.items[i]
 		_paint_cell(_item_buttons[i], carried)
  
+	if _tab == TAB_TALENTS:
+		_rebuild_talents(unit)
+ 
  
 func _on_raise(stat_name: String) -> void:
 	if _selected == null or _selected.stats == null:
@@ -339,6 +385,102 @@ func _paint_cell(button: Button, item: Item) -> void:
 	else:
 		button.tooltip_text = ""
 		button.modulate = Color.WHITE
+ 
+ 
+# ----------------------------------------------------------------- talents
+ 
+func _rebuild_talents(unit) -> void:
+	for child in _talent_root.get_children():
+		child.queue_free()
+ 
+	var klass: CharacterClass = unit.character_class if "character_class" in unit else null
+	var tree: TalentTree = klass.talent_tree if klass != null else null
+ 
+	if tree == null:
+		var none := Label.new()
+		none.text = "No talent tree for this class."
+		none.add_theme_font_size_override("font_size", 12)
+		none.modulate = Color(1, 1, 1, 0.5)
+		_talent_root.add_child(none)
+		return
+ 
+	var header := Label.new()
+	var points: int = unit.stats.talent_points if unit.stats != null else 0
+	header.text = "%s     %d point%s to spend" % [
+		tree.display_name, points, "" if points == 1 else "s"
+	]
+	header.add_theme_font_size_override("font_size", 14)
+	header.modulate = Color(1, 0.85, 0.5)
+	_talent_root.add_child(header)
+ 
+	# fixed grid so nodes keep their authored positions
+	var grid := GridContainer.new()
+	grid.columns = maxi(1, tree.columns_used())
+	grid.add_theme_constant_override("h_separation", TALENT_GAP)
+	grid.add_theme_constant_override("v_separation", TALENT_GAP)
+	_talent_root.add_child(grid)
+ 
+	var placed: Dictionary = {}
+	for t in tree.talents:
+		if t != null:
+			placed[Vector2i(t.column, t.row)] = t
+ 
+	for row in tree.rows_used():
+		for col in grid.columns:
+			var talent: Talent = placed.get(Vector2i(col, row))
+			grid.add_child(_talent_cell(unit, talent))
+ 
+ 
+func _talent_cell(unit, talent: Talent) -> Control:
+	if talent == null:
+		var blank := Control.new()
+		blank.custom_minimum_size = Vector2(TALENT_CELL, TALENT_CELL)
+		return blank
+ 
+	var rank: int = unit.talent_rank(talent)
+	var learnable: bool = unit.can_learn(talent)
+	var maxed: bool = rank >= talent.max_ranks
+ 
+	var button := Button.new()
+	button.custom_minimum_size = Vector2(TALENT_CELL, TALENT_CELL)
+	button.text = "%d/%d" % [rank, talent.max_ranks]
+	button.add_theme_font_size_override("font_size", 11)
+	button.disabled = not learnable
+	button.tooltip_text = _talent_tooltip(talent, rank)
+	button.pressed.connect(_on_talent_pressed.bind(talent))
+ 
+	# learned nodes glow, available ones are lit, locked ones are dim
+	var tint: Color = talent.icon_color
+	var alpha: float = 0.9 if rank > 0 else (0.5 if learnable else 0.18)
+ 
+	var box := StyleBoxFlat.new()
+	box.bg_color = Color(tint.r, tint.g, tint.b, alpha * 0.4)
+	box.set_corner_radius_all(6)
+	box.border_color = Color(tint.r, tint.g, tint.b, alpha)
+	box.set_border_width_all(3 if maxed else 1)
+	button.add_theme_stylebox_override("normal", box)
+	button.add_theme_stylebox_override("hover", box)
+	button.add_theme_stylebox_override("pressed", box)
+	button.add_theme_stylebox_override("disabled", box)
+ 
+	return button
+ 
+ 
+func _talent_tooltip(talent: Talent, rank: int) -> String:
+	var lines: Array = ["%s  (%d/%d)" % [talent.display_name, rank, talent.max_ranks]]
+	if not talent.description.is_empty():
+		lines.append(talent.description)
+	if talent.requires != null:
+		lines.append("Requires: %s" % talent.requires.display_name)
+	if talent.required_points > 0:
+		lines.append("Requires %d points in this tree" % talent.required_points)
+	return "\n".join(lines)
+ 
+ 
+func _on_talent_pressed(talent: Talent) -> void:
+	if _selected != null and _selected.has_method("learn_talent"):
+		if _selected.learn_talent(talent):
+			_refresh()
  
  
 # ------------------------------------------------------------ drag and drop
@@ -467,15 +609,18 @@ func _paint_portraits() -> void:
 func _on_portrait_pressed(unit) -> void:
 	_selected = unit
 	_refresh()
-
+ 
+ 
+# --------------------------------------------------------------- defences
+ 
 ## Armor and the four elemental resistances, each with its mitigation percent.
 func _rebuild_defences(unit) -> void:
 	for child in _defence_row.get_children():
 		child.queue_free()
-
+ 
 	var armor: int = unit.armor() if unit.has_method("armor") else 0
 	_defence_row.add_child(_defence_chip("Armor", armor, Color(0.80, 0.80, 0.84)))
-
+ 
 	if not unit.has_method("resistances"):
 		return
 	var res: Resistances = unit.resistances()
@@ -483,11 +628,11 @@ func _rebuild_defences(unit) -> void:
 		_defence_row.add_child(_defence_chip(
 			DamageType.label(element), res.get_for(element), DamageType.color(element)
 		))
-
-
+ 
+ 
 func _defence_chip(label_text: String, value: int, tint: Color) -> Control:
 	var cut: int = int(round((1.0 - Damage.multiplier(value)) * 100.0))
-
+ 
 	var chip := PanelContainer.new()
 	var box := StyleBoxFlat.new()
 	box.bg_color = Color(tint.r, tint.g, tint.b, 0.14)
@@ -497,20 +642,21 @@ func _defence_chip(label_text: String, value: int, tint: Color) -> Control:
 	chip.tooltip_text = "%s %d — reduces %s damage by %d%%" % [
 		label_text, value, label_text.to_lower(), cut
 	]
-
+ 
 	var line := HBoxContainer.new()
 	line.add_theme_constant_override("separation", 5)
-
+ 
 	var swatch := ColorRect.new()
 	swatch.custom_minimum_size = Vector2(9, 9)
 	swatch.color = tint
 	swatch.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	line.add_child(swatch)
-
+ 
 	var text := Label.new()
 	text.text = "%s %d  (-%d%%)" % [label_text, value, cut]
 	text.add_theme_font_size_override("font_size", 11)
 	line.add_child(text)
-
+ 
 	chip.add_child(line)
 	return chip
+ 

@@ -287,6 +287,7 @@ func add_xp(amount: int) -> void:
 		level += 1
 		if stats != null:
 			stats.available_points += Progression.POINTS_PER_LEVEL
+			stats.talent_points += 1
 		print("%s reaches level %d." % [display_name, level])
 		leveled_up.emit(level)
 
@@ -368,6 +369,7 @@ func save_state() -> Dictionary:
 		"stats": stats,
 		"inventory": inventory,
 		"character_class": character_class,
+		"talent_ranks": talent_ranks.duplicate(),
 		"level": level,
 		"xp": xp,
 		"base_armor": base_armor,
@@ -390,6 +392,7 @@ func load_state(data: Dictionary) -> void:
 	if data.get("base_resistances") != null:
 		base_resistances = data["base_resistances"]
 	xp = data.get("xp", xp)
+	talent_ranks = data.get("talent_ranks", {}).duplicate()
 	level = maxi(data.get("level", level), Progression.level_for_xp(xp))
 	base_armor = data.get("base_armor", base_armor)
 	current_mana = data.get("mana", max_mana())
@@ -399,3 +402,45 @@ func load_state(data: Dictionary) -> void:
 	xp_changed.emit(xp)
 	if data.get("following", false) and Game.player != null:
 		start_following(Game.player)
+		
+
+##tallents
+signal talents_changed
+
+## Talent display_name -> ranks taken.
+var talent_ranks: Dictionary = {}
+
+
+func talent_rank(talent: Talent) -> int:
+	return talent_ranks.get(talent.display_name, 0) if talent != null else 0
+
+
+func talent_points_spent() -> int:
+	var total: int = 0
+	for ranks in talent_ranks.values():
+		total += ranks
+	return total
+
+
+## Can this talent take another rank right now?
+func can_learn(talent: Talent) -> bool:
+	if talent == null or stats == null:
+		return false
+	if stats.talent_points <= 0:
+		return false
+	if talent_rank(talent) >= talent.max_ranks:
+		return false
+	if talent_points_spent() < talent.required_points:
+		return false
+	if talent.requires != null and talent_rank(talent.requires) < talent.requires.max_ranks:
+		return false
+	return true
+
+
+func learn_talent(talent: Talent) -> bool:
+	if not can_learn(talent):
+		return false
+	talent_ranks[talent.display_name] = talent_rank(talent) + 1
+	stats.talent_points -= 1
+	talents_changed.emit()
+	return true

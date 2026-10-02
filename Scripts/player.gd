@@ -222,6 +222,7 @@ func _check_level_up() -> void:
 		level += 1
 		if stats != null:
 			stats.available_points += Progression.POINTS_PER_LEVEL
+			stats.talent_points += 1
 		print("%s reaches level %d." % [display_name, level])
 		leveled_up.emit(level)
 
@@ -237,6 +238,7 @@ func save_state() -> Dictionary:
 		"gold": gold,
 		"xp": xp,
 		"level": level,
+		"talent_ranks": talent_ranks.duplicate(),
 		"base_armor": base_armor,
 		"base_resistances": base_resistances,
 		"inventory": inventory,
@@ -255,6 +257,7 @@ func load_state(data: Dictionary) -> void:
 		character_class = data["character_class"]
 	if data.get("base_resistances") != null:
 		base_resistances = data["base_resistances"]
+	talent_ranks = data.get("talent_ranks", {}).duplicate()
 	current_health = data.get("health", max_health())
 	current_mana = data.get("mana", max_mana())
 	gold = data.get("gold", 0)
@@ -399,3 +402,44 @@ func tick_effects() -> void:
 func clear_effects() -> void:
 	effects.clear()
 	effects_changed.emit()
+
+##tallents
+signal talents_changed
+
+## Talent display_name -> ranks taken.
+var talent_ranks: Dictionary = {}
+
+
+func talent_rank(talent: Talent) -> int:
+	return talent_ranks.get(talent.display_name, 0) if talent != null else 0
+
+
+func talent_points_spent() -> int:
+	var total: int = 0
+	for ranks in talent_ranks.values():
+		total += ranks
+	return total
+
+
+## Can this talent take another rank right now?
+func can_learn(talent: Talent) -> bool:
+	if talent == null or stats == null:
+		return false
+	if stats.talent_points <= 0:
+		return false
+	if talent_rank(talent) >= talent.max_ranks:
+		return false
+	if talent_points_spent() < talent.required_points:
+		return false
+	if talent.requires != null and talent_rank(talent.requires) < talent.requires.max_ranks:
+		return false
+	return true
+
+
+func learn_talent(talent: Talent) -> bool:
+	if not can_learn(talent):
+		return false
+	talent_ranks[talent.display_name] = talent_rank(talent) + 1
+	stats.talent_points -= 1
+	talents_changed.emit()
+	return true

@@ -14,3 +14,4 @@ extends Resource
 ## Filled in when abilities exist.
 @export var abilities: Array[Resource] = []
 @export var spells: Array[Spell] = []
+@export var talent_tree: TalentTree
