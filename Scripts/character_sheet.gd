@@ -470,6 +470,17 @@ func _talent_tooltip(talent: Talent, rank: int) -> String:
 	var lines: Array = ["%s  (%d/%d)" % [talent.display_name, rank, talent.max_ranks]]
 	if not talent.description.is_empty():
 		lines.append(talent.description)
+
+	var at_current: Array = talent.describe_at(maxi(1, rank))
+	if not at_current.is_empty():
+		lines.append("")
+		lines.append("Rank %d:  %s" % [maxi(1, rank), ", ".join(at_current)])
+
+	if rank < talent.max_ranks:
+		var at_next: Array = talent.describe_at(rank + 1)
+		if not at_next.is_empty():
+			lines.append("Rank %d:  %s" % [rank + 1, ", ".join(at_next)])
+
 	if talent.requires != null:
 		lines.append("Requires: %s" % talent.requires.display_name)
 	if talent.required_points > 0:

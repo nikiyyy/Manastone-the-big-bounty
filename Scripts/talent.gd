@@ -16,3 +16,17 @@ extends Resource
 ## Must be fully ranked before this one unlocks. Leave empty for a root node.
 @export var requires: Talent
 @export var required_points: int = 0      ## points spent in this tree first
+
+@export_group("Effects")
+@export var effects: Array[TalentEffect] = []
+
+## Tooltip lines for what this talent gives at a rank.
+func describe_at(rank: int) -> Array:
+	var lines: Array = []
+	for effect in effects:
+		if effect == null:
+			continue
+		var line: String = effect.describe(maxi(1, rank))
+		if not line.is_empty():
+			lines.append(line)
+	return lines

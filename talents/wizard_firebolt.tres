@@ -5,6 +5,7 @@
 
 [resource]
 script = ExtResource("1_y6p7c")
+display_name = "firebolt"
 column = 1
 row = 1
 requires = ExtResource("1_p0cvx")

@@ -1,6 +1,12 @@
 [gd_resource type="Resource" script_class="Talent" format=3 uid="uid://b2hlfcdm2hnjk"]
 
 [ext_resource type="Script" uid="uid://rvpl1ht4v82" path="res://Scripts/talent.gd" id="1_4flgq"]
+[ext_resource type="Script" uid="uid://ciqjw0vwcwgd3" path="res://Scripts/talent_effect.gd" id="1_ifido"]
+[ext_resource type="Script" uid="uid://dsbjds4k2q5da" path="res://Scripts/talent_effects/stat_to_armor_talent.gd" id="2_k8gu8"]
+
+[sub_resource type="Resource" id="Resource_tipki"]
+script = ExtResource("2_k8gu8")
+metadata/_custom_type_script = "uid://dsbjds4k2q5da"
 
 [resource]
 script = ExtResource("1_4flgq")
@@ -8,4 +14,5 @@ display_name = "Toughness"
 description = "Grit earned the hard way."
 max_ranks = 3
 column = 1
+effects = Array[ExtResource("1_ifido")]([SubResource("Resource_tipki")])
 metadata/_custom_type_script = "uid://rvpl1ht4v82"

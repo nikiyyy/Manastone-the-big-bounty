@@ -1,9 +1,18 @@
 [gd_resource type="Resource" script_class="Talent" format=3 uid="uid://breya0ceamv74"]
 
+[ext_resource type="Script" uid="uid://ciqjw0vwcwgd3" path="res://Scripts/talent_effect.gd" id="1_ltj4t"]
 [ext_resource type="Script" uid="uid://rvpl1ht4v82" path="res://Scripts/talent.gd" id="1_tmdn6"]
+[ext_resource type="Script" uid="uid://cwdegw876sc87" path="res://Scripts/talent_effects/flat_stat_talent.gd" id="2_yflir"]
+
+[sub_resource type="Resource" id="Resource_x0ejx"]
+script = ExtResource("2_yflir")
+stat_name = "mana_pool"
+metadata/_custom_type_script = "uid://cwdegw876sc87"
 
 [resource]
 script = ExtResource("1_tmdn6")
+display_name = "wizzard focus"
 max_ranks = 3
 column = 1
+effects = Array[ExtResource("1_ltj4t")]([SubResource("Resource_x0ejx")])
 metadata/_custom_type_script = "uid://rvpl1ht4v82"
