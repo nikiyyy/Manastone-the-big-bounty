@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Item" format=3 uid="uid://cjyhpg2bk6lm"]
+
+[ext_resource type="Script" uid="uid://30l2ylr7plcx" path="res://Scripts/item.gd" id="1_eh0qp"]
+
+[resource]
+script = ExtResource("1_eh0qp")
+display_name = "Hide armor"
+kind = 1
+slot = 4
+value = 10
+armor_class = 1
+armor_bonus = 5
+metadata/_custom_type_script = "uid://30l2ylr7plcx"

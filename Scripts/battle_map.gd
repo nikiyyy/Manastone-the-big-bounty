@@ -478,7 +478,8 @@ func _build_loadout(equipment: Array) -> Inventory:
 		if copy.slot == Item.Slot.NONE:
 			inv.items.append(copy)
 		else:
-			inv.equipped[copy.slot] = copy
+			inv.items.append(copy)
+			inv.equip(copy)
 	return inv
  
 func _is_player_side(unit) -> bool:

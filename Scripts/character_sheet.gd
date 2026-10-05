@@ -214,39 +214,71 @@ func _build_stats_panel() -> Control:
 	return column
  
  
+const LEFT_SLOTS := [
+	Item.Slot.HELMET, Item.Slot.NECKLACE, Item.Slot.TORSO,
+	Item.Slot.HANDS, Item.Slot.FEET,
+]
+const RIGHT_SLOTS := [
+	Item.Slot.RING_1, Item.Slot.RING_2,
+	Item.Slot.CHARM_1, Item.Slot.CHARM_2,
+]
+const HAND_SLOTS := [Item.Slot.MAIN_HAND, Item.Slot.OFF_HAND]
+
+
 func _build_equipment_panel() -> Control:
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation", 6)
-	column.custom_minimum_size = Vector2(180, 0)
- 
+
 	column.add_child(_section_title("Equipment"))
- 
-	var spacer := Control.new()
-	spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	column.add_child(spacer)
- 
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 8)
-	column.add_child(row)
- 
-	for slot in Inventory.SLOT_ORDER:
-		var cell := VBoxContainer.new()
-		cell.add_theme_constant_override("separation", 3)
- 
-		var button := _make_slot_button(CELL_SIZE, "equipment", slot)
-		cell.add_child(button)
- 
-		var caption := Label.new()
-		caption.text = Inventory.SLOT_LABELS[slot]
-		caption.add_theme_font_size_override("font_size", 10)
-		caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		caption.modulate = Color(1, 1, 1, 0.6)
-		cell.add_child(caption)
- 
-		row.add_child(cell)
-		_slot_buttons[slot] = button
- 
+
+	var body := HBoxContainer.new()
+	body.add_theme_constant_override("separation", 10)
+	column.add_child(body)
+
+	body.add_child(_slot_column(LEFT_SLOTS))
+
+	# middle gap where a paper doll would go
+	var middle := Control.new()
+	middle.custom_minimum_size = Vector2(70, 0)
+	body.add_child(middle)
+
+	body.add_child(_slot_column(RIGHT_SLOTS))
+
+	var hands := HBoxContainer.new()
+	hands.add_theme_constant_override("separation", 8)
+	hands.alignment = BoxContainer.ALIGNMENT_CENTER
+	column.add_child(hands)
+
+	for slot in HAND_SLOTS:
+		hands.add_child(_slot_cell(slot))
+
 	return column
+
+
+func _slot_column(slots: Array) -> Control:
+	var column := VBoxContainer.new()
+	column.add_theme_constant_override("separation", 5)
+	for slot in slots:
+		column.add_child(_slot_cell(slot))
+	return column
+
+
+func _slot_cell(slot: int) -> Control:
+	var cell := VBoxContainer.new()
+	cell.add_theme_constant_override("separation", 2)
+
+	var button := _make_slot_button(CELL_SIZE, "equipment", slot)
+	cell.add_child(button)
+
+	var caption := Label.new()
+	caption.text = Inventory.SLOT_LABELS[slot]
+	caption.add_theme_font_size_override("font_size", 9)
+	caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	caption.modulate = Color(1, 1, 1, 0.55)
+	cell.add_child(caption)
+
+	_slot_buttons[slot] = button
+	return cell
  
  
 func _build_inventory_panel() -> Control:

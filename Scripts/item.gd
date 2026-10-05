@@ -1,7 +1,20 @@
 class_name Item
 extends Resource
 
-enum Slot { MAIN_HAND, OFF_HAND, RANGED, NONE }
+enum Slot {
+	MAIN_HAND,
+	OFF_HAND,
+	HELMET,
+	NECKLACE,
+	TORSO,
+	RING_1,
+	RING_2,
+	HANDS,
+	FEET,
+	CHARM_1,
+	CHARM_2,
+	NONE,
+}
 enum Kind { WEAPON, ARMOR, CONSUMABLE, MISC }
 enum Rarity { COMMON, UNCOMMON, RARE, EPIC, LEGENDARY }
 enum Hands { ONE_HANDED, TWO_HANDED }
@@ -13,6 +26,15 @@ const RARITY_COLORS := {
 	Rarity.RARE: Color(0.3, 0.6, 0.95),
 	Rarity.EPIC: Color(0.7, 0.4, 0.9),
 	Rarity.LEGENDARY: Color(0.95, 0.7, 0.2),
+}
+
+enum ArmorClass { NONE, LIGHT, MEDIUM, HEAVY }
+
+const ARMOR_CLASS_LABELS := {
+	ArmorClass.NONE: "",
+	ArmorClass.LIGHT: "Light",
+	ArmorClass.MEDIUM: "Medium",
+	ArmorClass.HEAVY: "Heavy",
 }
 
 @export var display_name: String = "Item"
@@ -36,6 +58,7 @@ const RARITY_COLORS := {
 @export var stat_bonus: StatBonus
 
 @export_group("Armor")
+@export var armor_class: ArmorClass = ArmorClass.NONE
 @export var armor_bonus: int = 0
 @export var resistances: Resistances
 
@@ -63,8 +86,12 @@ func tooltip() -> String:
 		])
 		if is_light:
 			lines.append("Light  (+%d%% crit)" % crit_bonus)
-	if armor_bonus > 0:
-		lines.append("+%d armor" % armor_bonus)
+	if armor_bonus > 0 or armor_class != ArmorClass.NONE:
+		var weight: String = ARMOR_CLASS_LABELS.get(armor_class, "")
+		if weight.is_empty():
+			lines.append("+%d armor" % armor_bonus)
+		else:
+			lines.append("+%d armor (%s)" % [armor_bonus, weight.to_lower()])
 	if resistances != null:
 		for element in DamageType.ELEMENTS:
 			var value: int = resistances.get_for(element)
@@ -93,3 +120,6 @@ func is_long_shot(distance: int) -> bool:
 	
 func is_ranged() -> bool:
 	return kind == Kind.WEAPON and attack == Attack.RANGED
+
+func armor_class_name() -> String:
+	return ARMOR_CLASS_LABELS.get(armor_class, "")
