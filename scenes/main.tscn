@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://wsafoky2vc1o" path="res://scenes/TradeWindow.tscn" id="7_o6xl0"]
 [ext_resource type="PackedScene" uid="uid://drimseva77xj4" path="res://scenes/pause_menu.tscn" id="8_tipki"]
 [ext_resource type="PackedScene" uid="uid://bx8sjt0dppd56" path="res://scenes/battle_results.tscn" id="9_85g3d"]
+[ext_resource type="PackedScene" uid="uid://ddjx0gcu3nwnh" path="res://scenes/loot_window.tscn" id="10_choun"]
 
 [node name="Main" type="Node3D" unique_id=1098384311]
 script = ExtResource("1_tefeu")
@@ -36,3 +37,5 @@ script = ExtResource("6_tefeu")
 [node name="PauseMenu" parent="." unique_id=1578339901 instance=ExtResource("8_tipki")]
 
 [node name="BattleResults" parent="." unique_id=1721880926 instance=ExtResource("9_85g3d")]
+
+[node name="LootWindow" parent="." unique_id=842898570 instance=ExtResource("10_choun")]

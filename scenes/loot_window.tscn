@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://ddjx0gcu3nwnh"]
+
+[ext_resource type="Script" uid="uid://c4p4pbm6xi6d4" path="res://Scripts/loot_window.gd" id="1_v66qs"]
+
+[node name="LootWindow" type="CanvasLayer" unique_id=842898570]
+script = ExtResource("1_v66qs")
