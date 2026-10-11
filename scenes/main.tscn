@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://drimseva77xj4" path="res://scenes/pause_menu.tscn" id="8_tipki"]
 [ext_resource type="PackedScene" uid="uid://bx8sjt0dppd56" path="res://scenes/battle_results.tscn" id="9_85g3d"]
 [ext_resource type="PackedScene" uid="uid://ddjx0gcu3nwnh" path="res://scenes/loot_window.tscn" id="10_choun"]
+[ext_resource type="PackedScene" uid="uid://dmyly56l7cvdp" path="res://scenes/save_menu.tscn" id="11_ya4ey"]
 
 [node name="Main" type="Node3D" unique_id=1098384311]
 script = ExtResource("1_tefeu")
@@ -39,3 +40,5 @@ script = ExtResource("6_tefeu")
 [node name="BattleResults" parent="." unique_id=1721880926 instance=ExtResource("9_85g3d")]
 
 [node name="LootWindow" parent="." unique_id=842898570 instance=ExtResource("10_choun")]
+
+[node name="savemenu" parent="." unique_id=321012557 instance=ExtResource("11_ya4ey")]
