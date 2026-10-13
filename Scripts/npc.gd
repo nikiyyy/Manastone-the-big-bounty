@@ -32,6 +32,8 @@ signal talents_changed
 @export var stats: Stats
 @export var character_class: CharacterClass
 @export var inventory: Inventory
+## Worn on spawn. Simpler to fill in than the inventory's equipped dictionary.
+@export var loadout: Array[Item] = []
 @export var spells: Array[Spell] = []
 @export var ai: CombatAI
 @export var level: int = 1
@@ -73,6 +75,7 @@ func _ready() -> void:
 	inventory = inventory.duplicate(true) if inventory != null else Inventory.new()
 	if not Engine.is_editor_hint():
 		stats = stats.duplicate() if stats != null else Stats.new()
+		inventory.equip_all(loadout)
 		current_health = max_health()
 		current_mana = max_mana()
 	_apply_color()

@@ -189,3 +189,13 @@ func total_stat_bonus(stat_name: String) -> int:
 		if item.stat_bonus != null:
 			total += item.stat_bonus.get_for(stat_name)
 	return total
+
+## Wear everything in a list, each into its own slot. Used by loadouts.
+func equip_all(loadout: Array) -> void:
+	for item in loadout:
+		if item == null:
+			continue
+		var copy: Item = item.duplicate()
+		items.append(copy)
+		if copy.slot != Item.Slot.NONE:
+			equip(copy)

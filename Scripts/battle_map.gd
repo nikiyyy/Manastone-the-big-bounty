@@ -473,7 +473,8 @@ func _spawn_unit(data: Dictionary, at: Vector2i, faction: int):
 	if data.get("inventory") != null:
 		unit.inventory = data["inventory"]
 	else:
-		unit.inventory = _build_loadout(data.get("equipment", []))
+		unit.inventory = Inventory.new()
+		unit.inventory.equip_all(data.get("loadout", []))
  
 	if data.get("ai") != null:
 		unit.ai = data["ai"]
@@ -488,20 +489,6 @@ func _spawn_unit(data: Dictionary, at: Vector2i, faction: int):
 	if unit.has_signal("died"):
 		unit.died.connect(_on_unit_died.bind(unit))
 	return unit
- 
- 
-## Fresh inventory with the template's gear worn. Items are duplicated so
-## three pirates don't share one cutlass.
-func _build_loadout(equipment: Array) -> Inventory:
-	var inv := Inventory.new()
-	for item in equipment:
-		if item == null:
-			continue
-		var copy: Item = item.duplicate()
-		inv.items.append(copy)
-		if copy.slot != Item.Slot.NONE:
-			inv.equip(copy)
-	return inv
  
  
 func _is_player_side(unit) -> bool:

@@ -14,7 +14,7 @@ extends Resource
 
 @export_group("Loadout")
 ## Equipped automatically on spawn, into each item's own slot.
-@export var equipment: Array[Item] = []
+@export var loadout: Array[Item] = []
 @export var spells: Array[Spell] = []
 
 @export_group("Rewards")
@@ -46,7 +46,7 @@ func to_member(index: int) -> Dictionary:
 		"level": level,
 		"base_armor": base_armor,
 		"base_resistances": base_resistances,
-		"equipment": equipment,
+		"loadout": loadout,
 		"spells": spells,
 		"xp_reward": xp_reward,
 		"gold": roll_gold(),
