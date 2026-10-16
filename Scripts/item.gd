@@ -43,6 +43,7 @@ const ARMOR_CLASS_LABELS := {
 @export var slot: Slot = Slot.NONE
 @export var rarity: Rarity = Rarity.COMMON
 @export var value: int = 0
+@export var projectile_scene: PackedScene
 
 @export_group("Weapon")
 @export var hands: Hands = Hands.ONE_HANDED

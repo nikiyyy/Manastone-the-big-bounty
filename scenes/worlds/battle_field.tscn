@@ -1,8 +1,12 @@
 [gd_scene format=3 uid="uid://dipo8w4f8velb"]
 
 [ext_resource type="Script" uid="uid://tqthvwtk3o8k" path="res://Scripts/battle_map.gd" id="1_6rgv8"]
+[ext_resource type="PackedScene" uid="uid://bllcn6ilng32e" path="res://scenes/projectile.tscn" id="2_q7try"]
 
 [node name="BattleMap" type="Node3D" unique_id=916776863]
 script = ExtResource("1_6rgv8")
 columns = 20
 rows = 20
+projectile_scene = ExtResource("2_q7try")
+
+[node name="Projectile" parent="." unique_id=156744680 instance=ExtResource("2_q7try")]

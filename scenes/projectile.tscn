@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://bllcn6ilng32e"]
+
+[ext_resource type="Script" uid="uid://1hm6bk76fw8y" path="res://Scripts/projectile.gd" id="1_c8fcr"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3sak2"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_3sak2"]
+material = SubResource("StandardMaterial3D_3sak2")
+top_radius = 0.025
+bottom_radius = 0.025
+height = 0.45
+
+[node name="Projectile" type="Node3D" unique_id=156744680]
+script = ExtResource("1_c8fcr")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=444792634]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+mesh = SubResource("CylinderMesh_3sak2")

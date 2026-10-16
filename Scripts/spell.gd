@@ -4,7 +4,7 @@ extends Resource
 ## Radius 0 hits one hex; radius 1 hits a hex and its six neighbours.
 
 enum TargetSide { ENEMIES, ALLIES, ANY }
-
+@export var projectile_scene: PackedScene
 @export var display_name: String = "Spell"
 @export_multiline var description: String = ""
 @export var mana_cost: int = 3

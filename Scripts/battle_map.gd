@@ -28,6 +28,10 @@ const BLAST_TINT := Color(1.15, 0.45, 0.30)
 @export_range(0.0, 1.0) var rough_spread: float = 0.3
 @export var max_rough_cluster: int = 12
  
+@export_group("Projectiles")
+@export var projectile_scene: PackedScene
+@export var projectile_height: float = 1.1    ## launch and impact height
+ 
 ## Toggle this if tiles don't interlock. One of the two will be correct.
 @export var flat_top: bool = false:
 	set(value):
@@ -662,7 +666,17 @@ func _strike(attacker, target, distance: int) -> void:
 		" CRIT" if crit else "",
 		" [long shot]" if long_shot else ""
 	])
-	DamageNumber.spawn(target, dealt, "crit" if crit else ("blocked" if long_shot else "damage"), kind)
+ 
+	var flavour: String = "crit" if crit else ("blocked" if long_shot else "damage")
+	var show_number := func():
+		if is_instance_valid(target):
+			DamageNumber.spawn(target, dealt, flavour, kind)
+ 
+	# a ranged hit shows its number when the shot lands, not when it's loosed
+	var ranged: bool = weapon != null and weapon.is_ranged()
+	print("strike: weapon=", weapon.display_name if weapon else "none", " ranged=", ranged)
+	if not (ranged and _launch_projectile(weapon.projectile_scene, attacker, target, show_number)):
+		show_number.call()
  
 	battle_log.record_damage(attacker, target, dealt)
 	# record before take_damage: a fatal blow ends the battle synchronously,
@@ -670,6 +684,28 @@ func _strike(attacker, target, distance: int) -> void:
 	if target.is_alive() and dealt >= target.current_health:
 		battle_log.record_kill(attacker)
 	target.take_damage(dealt)
+ 
+ 
+## Fire a visual projectile between two points. Returns false if there's no
+## scene to fire, so the caller can show the hit immediately instead.
+func _launch_projectile(scene: PackedScene, attacker, target, on_arrive: Callable) -> bool:
+	if scene == null:
+		scene = projectile_scene        # the map's default
+	if scene == null:
+		return false
+
+	var shot = scene.instantiate()
+	if not shot.has_method("launch"):
+		shot.queue_free()
+		return false
+
+	add_child(shot)
+	shot.launch(
+		attacker.global_position + Vector3.UP * projectile_height,
+		target.global_position + Vector3.UP * projectile_height,
+		on_arrive
+	)
+	return true
  
  
 func _weapon_of(unit) -> Item:
