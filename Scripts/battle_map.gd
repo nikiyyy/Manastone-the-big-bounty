@@ -3,7 +3,6 @@ const HUD_SCENE_PATH := "res://scenes/combat_hud.tscn"
 const COMBAT_CAMERA_PATH := "res://scenes/combat_camera.tscn"
 const SPELL_BOOK_PATH := "res://scenes/spell_book.tscn"
 const RESULTS_SCENE_PATH := "res://scenes/battle_results.tscn"
-const LOOT_SCENE_PATH := "res://scenes/loot_window.tscn"
 const REACHABLE_TINT := Color(0.62, 0.72, 0.55)
 const COLOR_OBSTACLE := Color(0.04, 0.04, 0.05)
 const COLOR_ROUGH := Color(0.18, 0.32, 0.58)
@@ -846,20 +845,22 @@ func _show_results(won: bool) -> void:
 	screen.dismissed.connect(_show_spoils)
  
  
+## Spoils reuse the persistent transfer window — the same one containers use.
 func _show_spoils() -> void:
-	if _spoils.items.is_empty():
+	var window = get_tree().get_first_node_in_group("transfer_window")
+	if _spoils.items.is_empty() or window == null or Game.player == null:
 		Game.end_battle.call_deferred()
 		return
  
-	var packed: PackedScene = load(LOOT_SCENE_PATH)
-	if packed == null:
-		Game.end_battle.call_deferred()
-		return
- 
-	var window = packed.instantiate()
-	add_child(window)
-	window.open(_spoils, Game.player)
-	window.closed.connect(func(): Game.end_battle.call_deferred())
+	window.open(_spoils, Game.player.inventory, {
+		"title": "Spoils of war",
+		"left_title": "Spoils",
+		"right_title": Game.player.display_name,
+		"close_label": "Leave",
+		"hint": "Double-click an item to move it. Anything left behind is lost.",
+	})
+	# one-shot, since the window outlives this battle
+	window.closed.connect(func(): Game.end_battle.call_deferred(), CONNECT_ONE_SHOT)
  
 # ------------------------------------------------------------------- spells
  

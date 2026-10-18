@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://bpahgbga4q875"]
+
+[ext_resource type="Script" uid="uid://dnuges0ji1jg8" path="res://Scripts/container.gd" id="1_cjixx"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_3sak2"]
+size = Vector3(0.8, 0.6, 0.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_3sak2"]
+size = Vector3(0.8, 0.6, 0.5)
+
+[node name="Chest" type="StaticBody3D" unique_id=461935459]
+collision_layer = 2
+script = ExtResource("1_cjixx")
+
+[node name="_apply_tint" type="MeshInstance3D" parent="." unique_id=418463550]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
+mesh = SubResource("BoxMesh_3sak2")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=566549581]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
+shape = SubResource("BoxShape3D_3sak2")

@@ -1,6 +1,7 @@
 extends CharacterBody3D
  
 signal interacted(npc)
+signal container_opened(container)
 signal health_changed(current: int, maximum: int)
 signal mana_changed(current: int, maximum: int)
 signal died
@@ -150,6 +151,12 @@ func _unhandled_input(event: InputEvent) -> void:
 		_request_path(actor, hit["position"])
 		return
  
+	# a chest or crate: walk over and open it
+	if collider != null and collider.has_method("is_container"):
+		if actor == self:
+			_approach(collider)
+		return
+ 
 	if collider != null and collider.has_method("get_faction"):
 		if world != null and world.has_method("request_attack"):
 			world.request_attack(actor, collider)
@@ -215,15 +222,17 @@ func _handle_inspect(pressed: bool) -> void:
  
 # ------------------------------------------------------------------ dialogue
  
-func _approach(npc) -> void:
-	var away: Vector3 = global_position - npc.global_position
+## Walk to a spot just outside something and remember to interact on arrival.
+## Works for NPCs and containers alike.
+func _approach(thing) -> void:
+	var away: Vector3 = global_position - thing.global_position
 	away.y = 0.0
 	if away.length() < 0.01:
 		away = Vector3.FORWARD
-	var stand_at: Vector3 = npc.global_position + away.normalized() * (interaction_range * 0.85)
+	var stand_at: Vector3 = thing.global_position + away.normalized() * (interaction_range * 0.85)
  
 	if _begin_path(_request_path(self, stand_at)):
-		interaction_target = npc
+		interaction_target = thing
  
  
 func _check_arrival() -> void:
@@ -239,13 +248,17 @@ func _check_arrival() -> void:
 	if flat_distance > interaction_range:
 		return
  
-	var npc = interaction_target
+	var thing = interaction_target
 	interaction_target = null
 	target_position = global_position
 	_face(b)
  
+	# both windows clear dialogue_open when they close
 	dialogue_open = true
-	interacted.emit(npc)
+	if thing.has_method("is_container"):
+		container_opened.emit(thing)
+	else:
+		interacted.emit(thing)
  
  
 func _face(point: Vector3) -> void:

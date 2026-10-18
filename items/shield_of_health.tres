@@ -12,6 +12,6 @@ metadata/_custom_type_script = "uid://fekjbrvub7ld"
 script = ExtResource("1_mt8yy")
 display_name = "health shield"
 slot = 1
-stat_bonus = SubResource("Resource_mt8yy")
 armor_bonus = 15
+stat_bonus = SubResource("Resource_mt8yy")
 metadata/_custom_type_script = "uid://30l2ylr7plcx"

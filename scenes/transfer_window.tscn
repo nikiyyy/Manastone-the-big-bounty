@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://dmn5pyvtrvodv"]
+
+[ext_resource type="Script" uid="uid://bxpnv00dtbwd4" path="res://Scripts/transfer_window.gd" id="1_g4cn2"]
+
+[node name="TransferWindow" type="CanvasLayer" unique_id=451107409]
+script = ExtResource("1_g4cn2")
