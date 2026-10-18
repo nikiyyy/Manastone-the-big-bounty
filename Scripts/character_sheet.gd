@@ -1,5 +1,5 @@
 extends Control
-## Press Tab to open. Builds its own layout so adding a stat to Stats.NAMES
+## Press I to open. Builds its own layout so adding a stat to Stats.NAMES
 ## is the only change needed to show it here.
  
 const PORTRAIT_SIZE := 44
@@ -8,6 +8,8 @@ const COLOR_ALLY := Color(0.25, 0.75, 0.35)
 const COLOR_SELECTED := Color(1.0, 0.85, 0.35)
 const INVENTORY_CELLS := 16
 const CELL_SIZE := Vector2(48, 48)
+const COLOR_ITEM := Color(0.55, 0.35, 0.85)
+const COLOR_CONSUMABLE := Color(0.4, 0.8, 0.45)
  
 const TAB_STATS := 0
 const TAB_TALENTS := 1
@@ -63,9 +65,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if not (event is InputEventKey and event.pressed and not event.echo):
 		return
  
-	if event.keycode == KEY_TAB:
-		if Game.in_battle() and not visible:
-			return
+	if event.keycode == KEY_I:
 		_toggle()
 		get_viewport().set_input_as_handled()
 	elif event.keycode == KEY_ESCAPE and visible:
@@ -153,7 +153,7 @@ func _build() -> void:
 	_show_tab(TAB_STATS)
  
 	var hint := Label.new()
-	hint.text = "Tab or Esc to close"
+	hint.text = "I or Esc to close  ·  double-click a potion to use it"
 	hint.add_theme_font_size_override("font_size", 11)
 	hint.modulate = Color(1, 1, 1, 0.5)
 	outer.add_child(hint)
@@ -295,6 +295,7 @@ func _build_inventory_panel() -> Control:
  
 	for i in INVENTORY_CELLS:
 		var button := _make_slot_button(CELL_SIZE, "inventory", i)
+		button.gui_input.connect(_on_item_input.bind(i))
 		grid.add_child(button)
 		_item_buttons.append(button)
  
@@ -411,12 +412,52 @@ func _paint_cell(button: Button, item: Item) -> void:
 	var icon: ColorRect = button.get_node("Icon")
 	icon.visible = item != null
 	if item != null:
-		icon.color = Color(0.55, 0.35, 0.85)
+		# consumables are green so they stand out as usable
+		icon.color = COLOR_CONSUMABLE if item.is_consumable() else COLOR_ITEM
 		button.tooltip_text = item.tooltip()
 		button.modulate = item.rarity_color()
 	else:
 		button.tooltip_text = ""
 		button.modulate = Color.WHITE
+
+
+# --------------------------------------------------------------- using items
+
+func _on_item_input(event: InputEvent, index: int) -> void:
+	if not (event is InputEventMouseButton and event.double_click):
+		return
+	if event.button_index != MOUSE_BUTTON_LEFT:
+		return
+	_use_item(index)
+
+
+## Double-click a consumable to use it. In battle this goes through the map
+## so it costs an action; outside, the unit just drinks it.
+func _use_item(index: int) -> void:
+	var pack := _backpack()
+	if pack == null or index >= pack.items.size():
+		return
+	var item: Item = pack.items[index]
+	if not item.is_consumable():
+		return
+
+	var world := Game.current_world
+	if Game.in_battle() and world != null and world.has_method("use_consumable"):
+		var user = world.get_controlled_unit()
+		if user == null:
+			return
+		if world.use_consumable(user, item):
+			if item.is_thrown():
+				hide()          # the map needs the screen for targeting
+			_refresh()
+		return
+
+	if item.is_thrown():
+		return                  # nothing to throw at outside combat
+	if _selected != null and _selected.has_method("consume") and _selected.consume(item):
+		if item.consumed_on_use:
+			pack.items.erase(item)
+		_refresh()
  
  
 # ----------------------------------------------------------------- talents
@@ -570,6 +611,8 @@ func _can_drop_here(_at: Vector2, data: Variant, kind: String, key) -> bool:
 	if typeof(data) != TYPE_DICTIONARY or not data.has("item"):
 		return false
 	if kind == "equipment":
+		if Game.in_battle():
+			return false          # no swapping gear mid-fight
 		var gear := _gear()
 		return gear != null and gear.can_equip(data["item"], key)
 	return true
@@ -702,4 +745,5 @@ func _defence_chip(label_text: String, value: int, tint: Color) -> Control:
  
 	chip.add_child(line)
 	return chip
+ 
  

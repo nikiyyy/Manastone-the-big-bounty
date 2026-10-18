@@ -15,6 +15,7 @@
 [ext_resource type="Resource" uid="uid://cjyhpg2bk6lm" path="res://items/hide_armor.tres" id="11_a8ls1"]
 [ext_resource type="Resource" uid="uid://bcouf66vdsb7j" path="res://spells/fireball.tres" id="11_d2wvv"]
 [ext_resource type="Resource" uid="uid://ekak1xlfrmrd" path="res://spells/heroism_spell.tres" id="12_3v2ag"]
+[ext_resource type="Resource" uid="uid://1kfc4w2t8nch" path="res://items/small_health_potion.tres" id="12_qfm1y"]
 [ext_resource type="PackedScene" uid="uid://dka2s0dwaf61q" path="res://assets/playerchar.glb" id="13_jej6c"]
 
 [sub_resource type="Resource" id="Resource_abqhh"]
@@ -26,7 +27,7 @@ metadata/_custom_type_script = "uid://qlg6oc76b8q2"
 
 [sub_resource type="Resource" id="Resource_5iu60"]
 script = ExtResource("4_qlg0r")
-items = Array[ExtResource("3_dqkch")]([ExtResource("4_tuyoq"), ExtResource("5_smehm"), ExtResource("6_ur7pv"), ExtResource("7_y4r1p"), ExtResource("8_f1ej7"), ExtResource("9_oprun"), ExtResource("11_a8ls1")])
+items = Array[ExtResource("3_dqkch")]([ExtResource("4_tuyoq"), ExtResource("5_smehm"), ExtResource("6_ur7pv"), ExtResource("7_y4r1p"), ExtResource("8_f1ej7"), ExtResource("9_oprun"), ExtResource("11_a8ls1"), ExtResource("12_qfm1y")])
 metadata/_custom_type_script = "uid://sns8ro2vulvm"
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_3sak2"]

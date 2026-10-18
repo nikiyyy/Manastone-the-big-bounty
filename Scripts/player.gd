@@ -213,7 +213,7 @@ func _handle_inspect(pressed: bool) -> void:
 	if collider != null and (collider.has_method("get_faction") or collider == self):
 		inspector.show_for(collider)
  
-# ----------------------------------------------------------------- dialogue
+# ------------------------------------------------------------------ dialogue
  
 func _approach(npc) -> void:
 	var away: Vector3 = global_position - npc.global_position
@@ -253,7 +253,7 @@ func _face(point: Vector3) -> void:
 	if flat.distance_to(global_position) > 0.01:
 		look_at(flat, Vector3.UP)
  
-# ------------------------------------------------------------------- health
+# -------------------------------------------------------------------- health
  
 func max_health() -> int:
 	return maxi(1, modified_stat("health"))
@@ -285,7 +285,7 @@ func _die() -> void:
 	$CollisionShape3D.set_deferred("disabled", true)
 	died.emit()
  
-# --------------------------------------------------------------------- mana
+# ---------------------------------------------------------------------- mana
  
 func max_mana() -> int:
 	return maxi(0, modified_stat("mana_pool"))
@@ -303,7 +303,7 @@ func restore_mana(amount: int) -> void:
 	current_mana = mini(max_mana(), current_mana + amount)
 	mana_changed.emit(current_mana, max_mana())
  
-# --------------------------------------------------------- armor, resisting
+# ---------------------------------------------------------- armor, resisting
  
 func equipment_armor() -> int:
 	return inventory.total_armor() if inventory != null else 0
@@ -325,7 +325,6 @@ func add_armor(amount: int) -> void:
 	armor_changed.emit(armor())
  
  
-## Innate resistance plus whatever gear adds.
 func resistances() -> Resistances:
 	var base: Resistances = base_resistances if base_resistances != null else Resistances.new()
 	var gear: Resistances = inventory.total_resistances() if inventory != null else null
@@ -335,7 +334,7 @@ func resistances() -> Resistances:
 func resistance_to(kind: int) -> int:
 	return resistances().get_for(kind) + talent_resistance_bonus(kind)
  
-# ----------------------------------------------------------- stats, effects
+# ------------------------------------------------------------ stats, effects
  
 ## A stat with gear, talents and active effects layered on, in that order.
 func modified_stat(stat_name: String) -> int:
@@ -352,6 +351,25 @@ func equipment_bonus(stat_name: String) -> int:
 func add_effect(effect: Effect) -> void:
 	effects.add(effect)
 	effects_changed.emit()
+ 
+ 
+## Apply an effect right now: instant healing lands immediately, a timed
+## effect is held. Works in and out of combat.
+func apply_effect_now(effect: Effect) -> void:
+	if effect == null:
+		return
+	if effect.heals():
+		heal(effect.roll_heal())
+	if not effect.is_instant():
+		add_effect(effect)
+ 
+ 
+## Drink a consumable. Returns false if the item isn't drinkable.
+func consume(item: Item) -> bool:
+	if item == null or not item.is_consumable() or item.is_thrown():
+		return false
+	apply_effect_now(item.effect)
+	return true
  
  
 ## Called at the start of this unit's turn.
@@ -371,7 +389,7 @@ func _on_stat_raised(stat_name: String) -> void:
 		current_health += 1
 		health_changed.emit(current_health, max_health())
  
-# ------------------------------------------------------------------ talents
+# ------------------------------------------------------------------- talents
  
 func talent_rank(talent: Talent) -> int:
 	return talent_ranks.get(talent.display_name, 0) if talent != null else 0
@@ -448,7 +466,7 @@ func talent_resistance_bonus(kind: int) -> int:
 				total += effect.resistance_bonus(self, kind, entry["rank"])
 	return total
  
-# ------------------------------------------------------- gold and levelling
+# -------------------------------------------------------- gold and levelling
  
 func add_gold(amount: int) -> void:
 	gold = maxi(0, gold + amount)
@@ -474,7 +492,7 @@ func _check_level_up() -> void:
 		print("%s reaches level %d." % [display_name, level])
 		leveled_up.emit(level)
  
-# -------------------------------------------------------------------- saving
+# --------------------------------------------------------------------- saving
  
 func save_state() -> Dictionary:
 	return {

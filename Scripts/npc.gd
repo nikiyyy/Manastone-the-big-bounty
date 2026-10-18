@@ -104,7 +104,7 @@ func is_enemy() -> bool:
 func class_name_of() -> String:
 	return character_class.display_name if character_class != null else "—"
  
-# ------------------------------------------------------------------- follow
+# -------------------------------------------------------------------- follow
  
 func start_following(who: Node3D) -> void:
 	follow_target = who
@@ -165,7 +165,7 @@ func _physics_process(delta: float) -> void:
 	velocity.y = 0.0 if is_on_floor() else velocity.y - 20.0 * delta
 	move_and_slide()
  
-# ------------------------------------------------------------------ walking
+# ------------------------------------------------------------------- walking
  
 func walk_to(where: Vector3) -> void:
 	walk_path([where])
@@ -190,7 +190,7 @@ func teleport_to(where: Vector3) -> void:
 	_walk_target = null
 	velocity = Vector3.ZERO
  
-# ------------------------------------------------------------------- health
+# -------------------------------------------------------------------- health
  
 func max_health() -> int:
 	return maxi(1, modified_stat("health"))
@@ -222,7 +222,7 @@ func _die() -> void:
 	$CollisionShape3D.set_deferred("disabled", true)
 	died.emit()
  
-# --------------------------------------------------------- armor, resisting
+# ---------------------------------------------------------- armor, resisting
  
 func equipment_armor() -> int:
 	return inventory.total_armor() if inventory != null else 0
@@ -239,7 +239,6 @@ func armor() -> int:
 	return total
  
  
-## Innate resistance plus whatever gear adds.
 func resistances() -> Resistances:
 	var base: Resistances = base_resistances if base_resistances != null else Resistances.new()
 	var gear: Resistances = inventory.total_resistances() if inventory != null else null
@@ -249,7 +248,7 @@ func resistances() -> Resistances:
 func resistance_to(kind: int) -> int:
 	return resistances().get_for(kind) + talent_resistance_bonus(kind)
  
-# --------------------------------------------------------------------- mana
+# ---------------------------------------------------------------------- mana
  
 func max_mana() -> int:
 	return maxi(0, modified_stat("mana_pool"))
@@ -267,7 +266,7 @@ func restore_mana(amount: int) -> void:
 	current_mana = mini(max_mana(), current_mana + amount)
 	mana_changed.emit(current_mana, max_mana())
  
-# ----------------------------------------------------------- stats, effects
+# ------------------------------------------------------------ stats, effects
  
 ## A stat with gear, talents and active effects layered on, in that order.
 func modified_stat(stat_name: String) -> int:
@@ -286,6 +285,25 @@ func add_effect(effect: Effect) -> void:
 	effects_changed.emit()
  
  
+## Apply an effect right now: instant healing lands immediately, a timed
+## effect is held. Works in and out of combat.
+func apply_effect_now(effect: Effect) -> void:
+	if effect == null:
+		return
+	if effect.heals():
+		heal(effect.roll_heal())
+	if not effect.is_instant():
+		add_effect(effect)
+ 
+ 
+## Drink a consumable. Returns false if the item isn't drinkable.
+func consume(item: Item) -> bool:
+	if item == null or not item.is_consumable() or item.is_thrown():
+		return false
+	apply_effect_now(item.effect)
+	return true
+ 
+ 
 ## Called at the start of this unit's turn.
 func tick_effects() -> void:
 	var expired: Array = effects.advance()
@@ -297,7 +315,7 @@ func clear_effects() -> void:
 	effects.clear()
 	effects_changed.emit()
  
-# ------------------------------------------------------------------ talents
+# ------------------------------------------------------------------- talents
  
 func talent_rank(talent: Talent) -> int:
 	return talent_ranks.get(talent.display_name, 0) if talent != null else 0
@@ -374,7 +392,7 @@ func talent_resistance_bonus(kind: int) -> int:
 				total += effect.resistance_bonus(self, kind, entry["rank"])
 	return total
  
-# ---------------------------------------------------------------- levelling
+# ----------------------------------------------------------------- levelling
  
 func add_xp(amount: int) -> void:
 	if amount <= 0:
@@ -390,7 +408,7 @@ func add_xp(amount: int) -> void:
 		print("%s reaches level %d." % [display_name, level])
 		leveled_up.emit(level)
  
-# ----------------------------------------------------------------- merchant
+# ------------------------------------------------------------------ merchant
  
 ## Merchant inventory is built from `stock` on first use, then persists.
 func merchant_inventory() -> Inventory:
@@ -413,7 +431,7 @@ func buy_price(item: Item) -> int:
 func sell_price(item: Item) -> int:
 	return maxi(1, item.value)
  
-# ------------------------------------------------------- battle and saving
+# -------------------------------------------------------- battle and saving
  
 ## The whole army this figure represents. An empty party means it fights alone.
 func to_battle_group() -> Dictionary:

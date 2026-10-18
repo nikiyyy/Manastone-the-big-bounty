@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="Item" format=3 uid="uid://1kfc4w2t8nch"]
+
+[ext_resource type="Script" uid="uid://30l2ylr7plcx" path="res://Scripts/item.gd" id="1_axr6i"]
+[ext_resource type="Resource" uid="uid://cc5q6umx3sq83" path="res://effects/lesser_heal.tres" id="1_eob4k"]
+
+[resource]
+script = ExtResource("1_axr6i")
+kind = 2
+value = 25
+effect = ExtResource("1_eob4k")
+metadata/_custom_type_script = "uid://30l2ylr7plcx"

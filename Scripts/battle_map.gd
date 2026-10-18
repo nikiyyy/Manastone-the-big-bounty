@@ -71,6 +71,7 @@ var _blast_tiles: Dictionary = {}
 var _xp_pool: int = 0
 var _gold_pool: int = 0
 var _spoils: Inventory = Inventory.new()
+var _thrown_item: Item = null          # consumed when a thrown item lands
  
  
 func _ready() -> void:
@@ -674,8 +675,7 @@ func _strike(attacker, target, distance: int) -> void:
  
 	# a ranged hit shows its number when the shot lands, not when it's loosed
 	var ranged: bool = weapon != null and weapon.is_ranged()
-	print("strike: weapon=", weapon.display_name if weapon else "none", " ranged=", ranged)
-	if not (ranged and _launch_projectile(weapon.projectile_scene, attacker, target, show_number)):
+	if not (ranged and _launch_projectile(attacker, target, show_number)):
 		show_number.call()
  
 	battle_log.record_damage(attacker, target, dealt)
@@ -686,19 +686,16 @@ func _strike(attacker, target, distance: int) -> void:
 	target.take_damage(dealt)
  
  
-## Fire a visual projectile between two points. Returns false if there's no
-## scene to fire, so the caller can show the hit immediately instead.
-func _launch_projectile(scene: PackedScene, attacker, target, on_arrive: Callable) -> bool:
-	if scene == null:
-		scene = projectile_scene        # the map's default
-	if scene == null:
+## Fire a visual projectile between two units. Returns false when none is
+## configured, so the caller can show the hit immediately instead.
+func _launch_projectile(attacker, target, on_arrive: Callable) -> bool:
+	if projectile_scene == null:
 		return false
-
-	var shot = scene.instantiate()
+	var shot = projectile_scene.instantiate()
 	if not shot.has_method("launch"):
 		shot.queue_free()
 		return false
-
+ 
 	add_child(shot)
 	shot.launch(
 		attacker.global_position + Vector3.UP * projectile_height,
@@ -905,34 +902,68 @@ func _try_begin_targeting(index: int) -> void:
 	var caster = get_controlled_unit()
 	if caster == null:
 		return
-	if not combat.can_act():
-		print("No action left this turn.")
-		return
  
 	var known: Array = _spells_of(caster)
 	if index >= known.size():
 		print("No spell in slot %d." % (index + 1))
 		return
  
-	var spell: Spell = known[index]
+	_begin_targeting_with(known[index], caster)
+ 
+ 
+## Shared by spells and thrown items. `source_item` is consumed on a hit.
+func _begin_targeting_with(spell: Spell, caster, source_item: Item = null) -> bool:
+	if combat == null or _deploying or _battle_over or caster == null:
+		return false
+	if not combat.can_act():
+		print("No action left this turn.")
+		return false
+ 
 	var mana: int = caster.current_mana if "current_mana" in caster else 0
 	if mana < spell.mana_cost:
 		print("Not enough mana for %s (%d needed, %d left)." % [
 			spell.display_name, spell.mana_cost, mana
 		])
-		return
+		return false
  
 	_targeting = spell
 	_caster = caster
+	_thrown_item = source_item
 	_cast_tiles = _hexes_within(_hexes[caster], spell.cast_range)
 	_blast_tiles.clear()
 	_repaint()
-	print("Targeting %s — left click to cast, Escape to cancel." % spell.display_name)
+	print("Targeting %s — left click to use, Escape to cancel." % spell.display_name)
+	return true
+ 
+ 
+## Drink or throw a consumable. Returns true if the action was taken.
+func use_consumable(unit, item: Item) -> bool:
+	if combat == null or _deploying or _battle_over:
+		return false
+	if item == null or not item.is_consumable():
+		return false
+	if unit != combat.active or not combat.player_controlled():
+		print("Not that unit's turn.")
+		return false
+	if not combat.can_act():
+		print("No action left this turn.")
+		return false
+ 
+	if item.is_thrown():
+		return _begin_targeting_with(item.to_spell(), unit, item)
+ 
+	combat.spend_action()
+	print("%s drinks %s." % [_name_of(unit), item.display_name])
+	apply_effect_to(unit, item.effect)
+	if item.consumed_on_use and "inventory" in unit and unit.inventory != null:
+		unit.inventory.items.erase(item)
+	return true
  
  
 func cancel_targeting() -> void:
 	_targeting = null
 	_caster = null
+	_thrown_item = null
 	_cast_tiles.clear()
 	_blast_tiles.clear()
 	_repaint()
@@ -996,8 +1027,13 @@ func confirm_cast(world_pos: Vector3) -> bool:
 		return false
 	combat.spend_action()
  
+	# a thrown item is spent whether or not it hits anyone
+	if _thrown_item != null and _thrown_item.consumed_on_use:
+		if "inventory" in caster and caster.inventory != null:
+			caster.inventory.items.erase(_thrown_item)
+ 
 	var power: int = 0
-	if unit_has_stat(caster):
+	if spell.scales_with_magic and unit_has_stat(caster):
 		power = caster.modified_stat("magic_power")
  
 	var caster_side: bool = _is_player_side(caster)
@@ -1035,18 +1071,25 @@ func confirm_cast(world_pos: Vector3) -> bool:
 	return true
  
  
-## Public entry point for anything that applies an effect: spells now, and
-## later terrain hazards, traps, or auras. Nothing else needs to know how
-## effects are stored on a unit.
+## Public entry point for anything that applies an effect: spells, consumables,
+## and later terrain hazards, traps or auras. Instant effects resolve here;
+## timed ones are handed to the unit to hold.
 func apply_effect_to(unit, effect: Effect) -> void:
 	if unit == null or not is_instance_valid(unit) or effect == null:
 		return
-	if not unit.has_method("add_effect"):
-		return
-	unit.add_effect(effect)
-	print("  %s gains %s for %d turns." % [
-		_name_of(unit), effect.display_name, effect.duration
-	])
+ 
+	if effect.heals() and unit.has_method("heal"):
+		var amount: int = effect.roll_heal()
+		unit.heal(amount)
+		DamageNumber.spawn(unit, amount, "heal")
+		print("  %s recovers %d health." % [_name_of(unit), amount])
+ 
+	if not effect.is_instant() and unit.has_method("add_effect"):
+		unit.add_effect(effect)
+		print("  %s gains %s for %d turns." % [
+			_name_of(unit), effect.display_name, effect.duration
+		])
+ 
 	_refresh_reachable()      # haste may have changed
  
  
