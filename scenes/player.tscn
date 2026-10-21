@@ -35,10 +35,17 @@ metadata/_custom_type_script = "uid://sns8ro2vulvm"
 [node name="Player" type="CharacterBody3D" unique_id=1841863593]
 collision_layer = 2
 script = ExtResource("1_3vyb7")
+speed = null
+interaction_range = null
+display_name = null
 stats = SubResource("Resource_abqhh")
 character_class = ExtResource("9_ur7pv")
 inventory = SubResource("Resource_5iu60")
 spells = Array[ExtResource("10_y4r1p")]([ExtResource("11_d2wvv"), ExtResource("12_3v2ag")])
+level = null
+xp = null
+gold = null
+base_armor = null
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1058992928]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
