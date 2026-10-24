@@ -1,0 +1,73 @@
+[gd_resource type="Resource" script_class="DialogueTree" format=3 uid="uid://bl2r61fth17ks"]
+
+[ext_resource type="Script" uid="uid://cq0hsdchhvnud" path="res://Scripts/dialogue_node.gd" id="1_ikbwi"]
+[ext_resource type="Script" uid="uid://f4ugokmab8kf" path="res://Scripts/dialogue_choice.gd" id="2_emtdn"]
+[ext_resource type="Script" uid="uid://c443q4xi1qfom" path="res://Scripts/dialogue_tree.gd" id="2_h7jai"]
+[ext_resource type="Script" uid="uid://dr4530vcd0i6r" path="res://Scripts/dialogue_action.gd" id="3_gvidh"]
+[ext_resource type="Script" uid="uid://bjm58q1mm72pi" path="res://Scripts/dialogue_condition.gd" id="4_akyrr"]
+
+[sub_resource type="Resource" id="Resource_gvidh"]
+script = ExtResource("2_emtdn")
+text = "a Friend"
+next = &"start2"
+metadata/_custom_type_script = "uid://f4ugokmab8kf"
+
+[sub_resource type="Resource" id="Resource_7crs0"]
+script = ExtResource("3_gvidh")
+kind = 15
+metadata/_custom_type_script = "uid://dr4530vcd0i6r"
+
+[sub_resource type="Resource" id="Resource_akyrr"]
+script = ExtResource("2_emtdn")
+text = "follow me"
+actions = Array[ExtResource("3_gvidh")]([SubResource("Resource_7crs0")])
+metadata/_custom_type_script = "uid://f4ugokmab8kf"
+
+[sub_resource type="Resource" id="Resource_nvuu2"]
+script = ExtResource("3_gvidh")
+kind = 20
+metadata/_custom_type_script = "uid://dr4530vcd0i6r"
+
+[sub_resource type="Resource" id="Resource_ju5r8"]
+script = ExtResource("2_emtdn")
+text = "exit
+"
+actions = Array[ExtResource("3_gvidh")]([SubResource("Resource_nvuu2")])
+metadata/_custom_type_script = "uid://f4ugokmab8kf"
+
+[sub_resource type="Resource" id="Resource_he22e"]
+script = ExtResource("1_ikbwi")
+text = "Who are you"
+speaker = "Bellona"
+choices = Array[ExtResource("2_emtdn")]([SubResource("Resource_gvidh"), SubResource("Resource_akyrr"), SubResource("Resource_ju5r8")])
+metadata/_custom_type_script = "uid://cq0hsdchhvnud"
+
+[sub_resource type="Resource" id="Resource_lcs38"]
+script = ExtResource("2_emtdn")
+text = "ok"
+metadata/_custom_type_script = "uid://f4ugokmab8kf"
+
+[sub_resource type="Resource" id="Resource_ukr8w"]
+script = ExtResource("3_gvidh")
+kind = 20
+metadata/_custom_type_script = "uid://dr4530vcd0i6r"
+
+[sub_resource type="Resource" id="Resource_g46cm"]
+script = ExtResource("2_emtdn")
+text = "exit
+"
+actions = Array[ExtResource("3_gvidh")]([SubResource("Resource_ukr8w")])
+metadata/_custom_type_script = "uid://f4ugokmab8kf"
+
+[sub_resource type="Resource" id="Resource_emtdn"]
+script = ExtResource("1_ikbwi")
+id = &"start2"
+text = "oh ok"
+speaker = "Bellona"
+choices = Array[ExtResource("2_emtdn")]([SubResource("Resource_lcs38"), SubResource("Resource_g46cm")])
+metadata/_custom_type_script = "uid://cq0hsdchhvnud"
+
+[resource]
+script = ExtResource("2_h7jai")
+nodes = Array[ExtResource("1_ikbwi")]([SubResource("Resource_he22e"), SubResource("Resource_emtdn")])
+metadata/_custom_type_script = "uid://c443q4xi1qfom"

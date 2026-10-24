@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://kopod8vi4sng" path="res://scenes/npc.tscn" id="2_fwfmv"]
 [ext_resource type="Script" uid="uid://30l2ylr7plcx" path="res://Scripts/item.gd" id="3_bgisd"]
 [ext_resource type="Script" uid="uid://qlg6oc76b8q2" path="res://Scripts/stats.gd" id="3_fwfmv"]
+[ext_resource type="Resource" uid="uid://bl2r61fth17ks" path="res://dialogue/Bellona.tres" id="3_tn3yd"]
 [ext_resource type="Script" uid="uid://uc2jbresri3e" path="res://Scripts/unit_template.gd" id="4_m22rl"]
 [ext_resource type="Script" uid="uid://sns8ro2vulvm" path="res://Scripts/inventory.gd" id="4_r30v4"]
 [ext_resource type="Script" uid="uid://cxwuxvpoxrgrf" path="res://Scripts/resistances.gd" id="5_cg4qs"]
@@ -20,12 +21,12 @@ script = ExtResource("4_r30v4")
 [sub_resource type="Resource" id="Resource_3evjc"]
 script = ExtResource("5_cg4qs")
 
-[sub_resource type="Resource" id="Resource_wrdim"]
-script = ExtResource("4_r30v4")
-
 [sub_resource type="Resource" id="Resource_tml4i"]
 script = ExtResource("7_kxl67")
 metadata/_custom_type_script = "uid://cinijcs8mk7ec"
+
+[sub_resource type="Resource" id="Resource_wrdim"]
+script = ExtResource("4_r30v4")
 
 [sub_resource type="Resource" id="Resource_i3btg"]
 script = ExtResource("5_cg4qs")
@@ -56,6 +57,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0034023523, 0, -0.012567997
 [node name="NPC" parent="." unique_id=905665313 instance=ExtResource("2_fwfmv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.349845, 0.10000038, 5.8358145)
 faction = 0
+npc_id = &"Bellona"
+dialogue = ExtResource("3_tn3yd")
 display_name = "Bellona"
 inventory = SubResource("Resource_tn3yd")
 base_resistances = SubResource("Resource_3evjc")
@@ -63,28 +66,28 @@ base_resistances = SubResource("Resource_3evjc")
 [node name="NPC" parent="NPC" unique_id=1900716751 instance=ExtResource("2_fwfmv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7534189, 0.10000038, -5.2703304)
 faction = 0
+ai = SubResource("Resource_tml4i")
 display_name = "Myra"
 character_class = ExtResource("6_la4ba")
 inventory = SubResource("Resource_wrdim")
-ai = SubResource("Resource_tml4i")
 base_resistances = SubResource("Resource_i3btg")
 
 [node name="NPC2" parent="." unique_id=1283164643 instance=ExtResource("2_fwfmv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2593198, 0.09999943, 7.078424)
+is_merchant = true
 display_name = "merchant"
 inventory = SubResource("Resource_n7nbc")
 base_resistances = SubResource("Resource_au5ld")
-is_merchant = true
 
 [node name="NPC3" parent="." unique_id=677490741 instance=ExtResource("2_fwfmv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.382188, 0.10000038, 4.5300207)
 faction = 1
+party = Array[ExtResource("4_m22rl")]([ExtResource("10_cg4qs"), ExtResource("8_pl87k"), ExtResource("10_cg4qs")])
 display_name = "Bandit"
 stats = SubResource("Resource_m22rl")
 character_class = ExtResource("8_r30v4")
 inventory = SubResource("Resource_sl2hr")
 base_resistances = SubResource("Resource_qdm4t")
-party = Array[ExtResource("4_m22rl")]([ExtResource("10_cg4qs"), ExtResource("8_pl87k"), ExtResource("10_cg4qs")])
 
 [node name="PlayerSpawn" type="Marker3D" parent="." unique_id=383359081]
 
