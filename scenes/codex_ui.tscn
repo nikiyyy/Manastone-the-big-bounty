@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://btcljsfubtwss"]
+
+[ext_resource type="Script" uid="uid://c6f0aqfnbey8w" path="res://Scripts/codex_ui.gd" id="1_lhbah"]
+
+[node name="CodexUi" type="CanvasLayer" unique_id=540013881]
+script = ExtResource("1_lhbah")
