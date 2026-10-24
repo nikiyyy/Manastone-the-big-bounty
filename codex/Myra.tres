@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CodexEntry" format=3 uid="uid://cvi3j1gpbunqi"]
+
+[ext_resource type="Script" uid="uid://bjm58q1mm72pi" path="res://Scripts/dialogue_condition.gd" id="1_60k2j"]
+[ext_resource type="Script" uid="uid://bb80a4rc58i3p" path="res://Scripts/codex_entry.gd" id="2_rhsv0"]
+[ext_resource type="Script" uid="uid://cevj34rny1dh" path="res://Scripts/codex_section.gd" id="3_e72yd"]
+
+[resource]
+script = ExtResource("2_rhsv0")
+id = &"mara"
+title = "Mara"
+category = "People"
+summary = "follower"
+metadata/_custom_type_script = "uid://bb80a4rc58i3p"

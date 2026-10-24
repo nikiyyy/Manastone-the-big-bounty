@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="CodexBook" format=3 uid="uid://cjvdhk0o6r54x"]
+
+[ext_resource type="Script" uid="uid://bb80a4rc58i3p" path="res://Scripts/codex_entry.gd" id="1_tnjrr"]
+[ext_resource type="Script" uid="uid://dv3qyfhnmi3gg" path="res://Scripts/codex_book.gd" id="2_3dmpb"]
+
+[resource]
+script = ExtResource("2_3dmpb")
+entries = Array[ExtResource("1_tnjrr")]([null])
+folder = "res://codex"
+metadata/_custom_type_script = "uid://dv3qyfhnmi3gg"

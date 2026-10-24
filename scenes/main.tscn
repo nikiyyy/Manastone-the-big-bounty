@@ -12,6 +12,8 @@
 [ext_resource type="PackedScene" uid="uid://ddjx0gcu3nwnh" path="res://scenes/loot_window.tscn" id="10_choun"]
 [ext_resource type="PackedScene" uid="uid://dmyly56l7cvdp" path="res://scenes/save_menu.tscn" id="11_ya4ey"]
 [ext_resource type="PackedScene" uid="uid://dmn5pyvtrvodv" path="res://scenes/transfer_window.tscn" id="12_eb6dy"]
+[ext_resource type="PackedScene" uid="uid://btcljsfubtwss" path="res://scenes/codex_ui.tscn" id="13_trceg"]
+[ext_resource type="Resource" uid="uid://cjvdhk0o6r54x" path="res://codex/book.tres" id="14_a8y0u"]
 
 [node name="Main" type="Node3D" unique_id=1098384311]
 script = ExtResource("1_tefeu")
@@ -45,3 +47,6 @@ script = ExtResource("6_tefeu")
 [node name="savemenu" parent="." unique_id=321012557 instance=ExtResource("11_ya4ey")]
 
 [node name="TransferWindow" parent="." unique_id=451107409 instance=ExtResource("12_eb6dy")]
+
+[node name="CodexUi" parent="." unique_id=540013881 instance=ExtResource("13_trceg")]
+book = ExtResource("14_a8y0u")

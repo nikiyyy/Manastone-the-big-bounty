@@ -71,6 +71,22 @@ func get_counter(key: StringName) -> int:
 	return counters.get(key, 0)
 
 
+## Codex pages the player has opened. Stored as ordinary flags, so a dialogue
+## condition can check FLAG_SET on "codex_read:the_siege" and react to what
+## the player has actually looked up.
+const READ_PREFIX := "codex_read:"
+
+
+func mark_read(entry_id: StringName) -> void:
+	if entry_id.is_empty():
+		return
+	set_flag(StringName(READ_PREFIX + entry_id), true)
+
+
+func has_read(entry_id: StringName) -> bool:
+	return get_flag(StringName(READ_PREFIX + entry_id))
+
+
 func add_counter(key: StringName, delta: int = 1) -> int:
 	if key.is_empty():
 		return 0
