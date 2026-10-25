@@ -62,6 +62,10 @@ func open(npc) -> void:
 	if npc == null or not is_instance_valid(npc):
 		return
 	current_npc = npc
+	# before the tree is built, so a "speak to so-and-so" objective is already
+	# ticked when its conditions are read
+	if npc.has_method("unique_id"):
+		Quests.notify_talk(npc.unique_id())
 	_tree = _tree_for(npc)
 	_pending = ""
 	_goto(_tree.start_id)

@@ -222,6 +222,7 @@ func capture_save() -> Dictionary:
 		"player": player_data,
 		"worlds": worlds,
 		"story": Story.save_state(),
+		"quests": Quests.save_state(),
 	}
 
 
@@ -249,6 +250,7 @@ func apply_save(data: Dictionary) -> void:
 	_world_states = data.get("worlds", {}).duplicate(true)
 	_player_state = data.get("player", {}).duplicate(true)
 	Story.load_state(data.get("story", {}))
+	Quests.load_state(data.get("quests", {}))
 
 	await load_world(world_path)
 	_suppress_capture = false

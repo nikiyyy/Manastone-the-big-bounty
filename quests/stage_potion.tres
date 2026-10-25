@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="QuestStage" format=3 uid="uid://b6uecag50ue7h"]
+
+[ext_resource type="Script" uid="uid://ddw2ngayx65s2" path="res://Scripts/quest_objective.gd" id="1_js31q"]
+[ext_resource type="Resource" uid="uid://8w0csui1qhe5" path="res://quests/obj_potion.tres" id="2_6f3an"]
+[ext_resource type="Script" uid="uid://dr4530vcd0i6r" path="res://Scripts/dialogue_action.gd" id="2_nmvie"]
+[ext_resource type="Script" uid="uid://7lgmhkhkwafg" path="res://Scripts/quest_stage.gd" id="3_6f3an"]
+
+[resource]
+script = ExtResource("3_6f3an")
+text = "Find a health potion and bring it back."
+objectives = Array[ExtResource("1_js31q")]([ExtResource("2_6f3an")])
+metadata/_custom_type_script = "uid://7lgmhkhkwafg"

@@ -1,0 +1,107 @@
+[gd_resource type="Resource" script_class="DialogueTree" format=3 uid="uid://caihfv5fefp8b"]
+
+[ext_resource type="Script" uid="uid://cq0hsdchhvnud" path="res://Scripts/dialogue_node.gd" id="1_s8apb"]
+[ext_resource type="Script" uid="uid://c443q4xi1qfom" path="res://Scripts/dialogue_tree.gd" id="2_8srxq"]
+[ext_resource type="Script" uid="uid://f4ugokmab8kf" path="res://Scripts/dialogue_choice.gd" id="2_hvmjm"]
+[ext_resource type="Script" uid="uid://dr4530vcd0i6r" path="res://Scripts/dialogue_action.gd" id="3_gjrnq"]
+[ext_resource type="Script" uid="uid://bjm58q1mm72pi" path="res://Scripts/dialogue_condition.gd" id="4_gjrnq"]
+
+[sub_resource type="Resource" id="Resource_3f7mm"]
+script = ExtResource("4_gjrnq")
+kind = 13
+key = &"merchant_potion"
+metadata/_custom_type_script = "uid://bjm58q1mm72pi"
+
+[sub_resource type="Resource" id="Resource_1omje"]
+script = ExtResource("2_hvmjm")
+text = "You look troubled."
+next = &"offer"
+conditions = Array[ExtResource("4_gjrnq")]([SubResource("Resource_3f7mm")])
+metadata/_custom_type_script = "uid://f4ugokmab8kf"
+
+[sub_resource type="Resource" id="Resource_gjrnq"]
+script = ExtResource("4_gjrnq")
+kind = 14
+key = &"merchant_potion"
+metadata/_custom_type_script = "uid://bjm58q1mm72pi"
+
+[sub_resource type="Resource" id="Resource_e0ddi"]
+script = ExtResource("2_hvmjm")
+text = "I found your potion."
+next = &"handin"
+conditions = Array[ExtResource("4_gjrnq")]([SubResource("Resource_gjrnq")])
+metadata/_custom_type_script = "uid://f4ugokmab8kf"
+
+[sub_resource type="Resource" id="Resource_tiyim"]
+script = ExtResource("3_gjrnq")
+kind = 17
+metadata/_custom_type_script = "uid://dr4530vcd0i6r"
+
+[sub_resource type="Resource" id="Resource_qttd1"]
+script = ExtResource("2_hvmjm")
+text = "Let's trade."
+actions = Array[ExtResource("3_gjrnq")]([SubResource("Resource_tiyim")])
+metadata/_custom_type_script = "uid://f4ugokmab8kf"
+
+[sub_resource type="Resource" id="Resource_ruhhn"]
+script = ExtResource("2_hvmjm")
+text = "Goodbye"
+metadata/_custom_type_script = "uid://f4ugokmab8kf"
+
+[sub_resource type="Resource" id="Resource_hvmjm"]
+script = ExtResource("1_s8apb")
+text = "Buying or selling?"
+speaker = "Merchant"
+choices = Array[ExtResource("2_hvmjm")]([SubResource("Resource_1omje"), SubResource("Resource_e0ddi"), SubResource("Resource_qttd1"), SubResource("Resource_ruhhn")])
+metadata/_custom_type_script = "uid://cq0hsdchhvnud"
+
+[sub_resource type="Resource" id="Resource_kyes6"]
+script = ExtResource("3_gjrnq")
+kind = 22
+key = &"merchant_potion"
+metadata/_custom_type_script = "uid://dr4530vcd0i6r"
+
+[sub_resource type="Resource" id="Resource_n83k3"]
+script = ExtResource("2_hvmjm")
+text = "I'll do it."
+next = &"start"
+actions = Array[ExtResource("3_gjrnq")]([SubResource("Resource_kyes6")])
+metadata/_custom_type_script = "uid://f4ugokmab8kf"
+
+[sub_resource type="Resource" id="Resource_jlbgh"]
+script = ExtResource("2_hvmjm")
+text = "Not right now."
+next = &"start"
+metadata/_custom_type_script = "uid://f4ugokmab8kf"
+
+[sub_resource type="Resource" id="Resource_ihyqh"]
+script = ExtResource("1_s8apb")
+id = &"offer"
+text = "I'm out of healing draughts and the road south is no place to be without one. Bring me a health potion and I'll make it worth your while."
+choices = Array[ExtResource("2_hvmjm")]([SubResource("Resource_n83k3"), SubResource("Resource_jlbgh")])
+metadata/_custom_type_script = "uid://cq0hsdchhvnud"
+
+[sub_resource type="Resource" id="Resource_ci7ou"]
+script = ExtResource("3_gjrnq")
+kind = 23
+key = &"merchant_potion"
+metadata/_custom_type_script = "uid://dr4530vcd0i6r"
+
+[sub_resource type="Resource" id="Resource_w28bc"]
+script = ExtResource("2_hvmjm")
+text = "Glad to help."
+next = &"start"
+actions = Array[ExtResource("3_gjrnq")]([SubResource("Resource_ci7ou")])
+metadata/_custom_type_script = "uid://f4ugokmab8kf"
+
+[sub_resource type="Resource" id="Resource_36ed1"]
+script = ExtResource("1_s8apb")
+id = &"handin"
+text = "You're a lifesaver. Here, as promised."
+choices = Array[ExtResource("2_hvmjm")]([SubResource("Resource_w28bc")])
+metadata/_custom_type_script = "uid://cq0hsdchhvnud"
+
+[resource]
+script = ExtResource("2_8srxq")
+nodes = Array[ExtResource("1_s8apb")]([SubResource("Resource_hvmjm"), SubResource("Resource_ihyqh"), SubResource("Resource_36ed1")])
+metadata/_custom_type_script = "uid://c443q4xi1qfom"

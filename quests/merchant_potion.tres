@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="Quest" format=3 uid="uid://dq48kcu2tjwac"]
+
+[ext_resource type="Script" uid="uid://dr4530vcd0i6r" path="res://Scripts/dialogue_action.gd" id="1_gyxrd"]
+[ext_resource type="Script" uid="uid://30l2ylr7plcx" path="res://Scripts/item.gd" id="2_l2a5f"]
+[ext_resource type="Resource" uid="uid://1kfc4w2t8nch" path="res://items/small_health_potion.tres" id="2_nagif"]
+[ext_resource type="Resource" uid="uid://b6tenmmv8eww3" path="res://items/fire_shield.tres" id="3_l2a5f"]
+[ext_resource type="Script" uid="uid://bjm58q1mm72pi" path="res://Scripts/dialogue_condition.gd" id="3_nagif"]
+[ext_resource type="Script" uid="uid://cy06f8wvtrlbr" path="res://Scripts/quest.gd" id="4_a076k"]
+[ext_resource type="Script" uid="uid://7lgmhkhkwafg" path="res://Scripts/quest_stage.gd" id="5_uew4r"]
+[ext_resource type="Resource" uid="uid://b6uecag50ue7h" path="res://quests/stage_potion.tres" id="8_a076k"]
+
+[sub_resource type="Resource" id="Resource_fau3x"]
+script = ExtResource("1_gyxrd")
+key = &"TAKE_ITEM"
+item = ExtResource("2_nagif")
+metadata/_custom_type_script = "uid://dr4530vcd0i6r"
+
+[resource]
+script = ExtResource("4_a076k")
+id = &"merchant_potion"
+title = "A Draught for the Road"
+category = "Riverside"
+description = "I'm out of healing draughts and the road south is no place to be without one. Bring me a health potion and I'll make it worth your while."
+stages = Array[ExtResource("5_uew4r")]([ExtResource("8_a076k")])
+start_npc = &"merchant1"
+turn_in_npc = &"merchant1"
+turn_in_name = "bobo"
+can_abandon = false
+xp_reward = 500
+gold_reward = 100
+item_rewards = Array[ExtResource("2_l2a5f")]([ExtResource("3_l2a5f")])
+extra_rewards = Array[ExtResource("1_gyxrd")]([SubResource("Resource_fau3x")])
+metadata/_custom_type_script = "uid://cy06f8wvtrlbr"

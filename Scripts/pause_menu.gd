@@ -12,6 +12,7 @@ const BUTTONS := [
 ## Other full-screen UI that should get Escape before the pause menu does.
 const BLOCKING_GROUPS := [
 	"character_sheet", "trade_window", "save_menu", "transfer_window", "codex_ui",
+	"quest_ui",
 ]
 
 var _root: Control

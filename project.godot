@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 Game="*uid://ct7h582tpybhf"
 Story="*uid://cxufr4ogw8ycv"
+Quests="*uid://bcyvj8be7goyf"
 
 [display]
 

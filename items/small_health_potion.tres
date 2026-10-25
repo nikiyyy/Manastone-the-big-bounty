@@ -5,6 +5,7 @@
 
 [resource]
 script = ExtResource("1_axr6i")
+display_name = "small health potion"
 kind = 2
 value = 25
 effect = ExtResource("1_eob4k")

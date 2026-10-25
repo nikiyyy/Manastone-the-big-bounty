@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="QuestObjective" format=3 uid="uid://8w0csui1qhe5"]
+
+[ext_resource type="Script" uid="uid://ddw2ngayx65s2" path="res://Scripts/quest_objective.gd" id="1_mwym4"]
+
+[resource]
+script = ExtResource("1_mwym4")
+id = &"fetch_potion"
+description = "Bring the happy merchant a health potion"
+kind = 1
+target = &"small health potion"
+metadata/_custom_type_script = "uid://ddw2ngayx65s2"

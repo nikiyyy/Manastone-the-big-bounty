@@ -18,12 +18,21 @@ enum Kind {
 	IS_FOLLOWING,
 	IS_MERCHANT,
 	FACTION_IS,
+	# Appended, never inserted: Godot stores an enum as its number, so adding
+	# one in the middle would re-point every condition resource already saved.
+	QUEST_ACTIVE,
+	QUEST_COMPLETED,
+	QUEST_NOT_STARTED,
+	QUEST_READY,
+	QUEST_STAGE_IS,
 }
 
 @export var kind: Kind = Kind.ALWAYS
-## Flag name, counter name, or stat name, depending on the kind.
+## Flag name, counter name, stat name or quest id, depending on the kind.
 ## For AFFINITY_AT_LEAST, leave empty to mean the NPC you're talking to.
 @export var key: StringName = ""
+## Second string, when one isn't enough — the stage id for QUEST_STAGE_IS.
+@export var value: StringName = ""
 @export var amount: int = 0
 @export var item: Item
 @export var faction: NPC.Faction = NPC.Faction.NEUTRAL
@@ -69,6 +78,21 @@ func _evaluate(npc, player) -> bool:
 
 		Kind.FACTION_IS:
 			return npc != null and "faction" in npc and npc.faction == faction
+
+		Kind.QUEST_ACTIVE:
+			return Quests.is_active(key)
+
+		Kind.QUEST_COMPLETED:
+			return Quests.is_completed(key)
+
+		Kind.QUEST_NOT_STARTED:
+			return not Quests.is_started(key)
+
+		Kind.QUEST_READY:
+			return Quests.is_ready_to_turn_in(key)
+
+		Kind.QUEST_STAGE_IS:
+			return Quests.is_active(key) and Quests.current_stage_id(key) == value
 
 		_:
 			return true
@@ -116,5 +140,16 @@ func describe() -> String:
 			return "Needs %d gold" % amount
 		Kind.HAS_ITEM:
 			return "Needs %s" % (item.display_name if item != null else "an item")
+		Kind.QUEST_ACTIVE:
+			return "While on: %s" % _quest_title()
+		Kind.QUEST_COMPLETED:
+			return "After: %s" % _quest_title()
+		Kind.QUEST_READY:
+			return "Finish: %s" % _quest_title()
 		_:
 			return ""
+
+
+func _quest_title() -> String:
+	var q: Quest = Quests.quest(key)
+	return q.title if q != null else String(key)

@@ -222,6 +222,8 @@ func to_battle_group() -> Dictionary:
 		solo["xp_reward"] = 10
 		solo["gold"] = 0
 		solo["scene_override"] = ""
+		# so a "kill this particular person" objective can name them
+		solo["quest_tag"] = unique_id()
 		members.append(solo)
 	else:
 		for template in party:

@@ -27,12 +27,23 @@ enum Kind {
 	FLEE_BATTLE,
 	END_DIALOGUE,
 	CUSTOM,
+	# Appended rather than slotted in alphabetically: Godot stores an enum as
+	# its number, so inserting one in the middle would silently re-point every
+	# action resource already saved.
+	START_QUEST,
+	COMPLETE_QUEST,
+	SET_QUEST_STAGE,
+	ABANDON_QUEST,
+	QUEST_EVENT,
 }
 
 @export var kind: Kind = Kind.NONE
-## Flag name, counter name, stat name, or an NPC id for CHANGE_AFFINITY.
-## Leave empty on CHANGE_AFFINITY to mean the NPC you're talking to.
+## Flag name, counter name, stat name, quest id, or an NPC id for
+## CHANGE_AFFINITY. Leave empty on CHANGE_AFFINITY to mean the NPC you're
+## talking to.
 @export var key: StringName = ""
+## Second string, when one isn't enough — the stage id for SET_QUEST_STAGE.
+@export var value: StringName = ""
 @export var amount: int = 0
 @export var item: Item
 @export var effect: Effect
@@ -120,6 +131,21 @@ func run(npc, player, runner) -> void:
 
 		Kind.CUSTOM:
 			Story.custom_action.emit(key, payload)
+
+		Kind.START_QUEST:
+			Quests.start(key)
+
+		Kind.COMPLETE_QUEST:
+			Quests.complete(key)
+
+		Kind.SET_QUEST_STAGE:
+			Quests.set_stage(key, value)
+
+		Kind.ABANDON_QUEST:
+			Quests.abandon(key)
+
+		Kind.QUEST_EVENT:
+			Quests.notify_custom(key, maxi(1, amount))
 
 		_:
 			pass

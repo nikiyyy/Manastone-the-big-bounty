@@ -12,6 +12,7 @@
 [ext_resource type="Script" uid="uid://cinijcs8mk7ec" path="res://Scripts/combat_ai.gd" id="7_kxl67"]
 [ext_resource type="Resource" uid="uid://cx8br4fv7eyjs" path="res://enemies/prisoner2.tres" id="8_pl87k"]
 [ext_resource type="Resource" uid="uid://dnxbsubqpomky" path="res://classes/warrior.tres" id="8_r30v4"]
+[ext_resource type="Resource" uid="uid://caihfv5fefp8b" path="res://dialogue/merchanttest.tres" id="9_3evjc"]
 [ext_resource type="Resource" uid="uid://ct1b7mady25h3" path="res://enemies/prisoner1.tres" id="10_cg4qs"]
 [ext_resource type="PackedScene" uid="uid://bpahgbga4q875" path="res://scenes/Chest.tscn" id="13_kxl67"]
 
@@ -74,6 +75,8 @@ base_resistances = SubResource("Resource_i3btg")
 
 [node name="NPC2" parent="." unique_id=1283164643 instance=ExtResource("2_fwfmv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2593198, 0.09999943, 7.078424)
+npc_id = &"merchant1"
+dialogue = ExtResource("9_3evjc")
 is_merchant = true
 display_name = "merchant"
 inventory = SubResource("Resource_n7nbc")
