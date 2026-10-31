@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="BattleTerrain" format=3 uid="uid://de8673a15do46"]
+
+[ext_resource type="Script" uid="uid://fb8vanyif57i" path="res://Scripts/battle_terrain.gd" id="1_2qxlg"]
+
+[resource]
+script = ExtResource("1_2qxlg")
+metadata/_custom_type_script = "uid://fb8vanyif57i"

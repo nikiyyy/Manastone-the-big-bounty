@@ -1,0 +1,37 @@
+[gd_scene format=3 uid="uid://kopod8vi4sng"]
+
+[ext_resource type="Script" uid="uid://wswuthoujb3k" path="res://Scripts/npc.gd" id="1_ideak"]
+[ext_resource type="Script" uid="uid://qlg6oc76b8q2" path="res://Scripts/stats.gd" id="2_abqhh"]
+[ext_resource type="Script" uid="uid://30l2ylr7plcx" path="res://Scripts/item.gd" id="3_7n8xq"]
+[ext_resource type="Script" uid="uid://sns8ro2vulvm" path="res://Scripts/inventory.gd" id="4_4wlns"]
+
+[sub_resource type="Resource" id="Resource_rv78h"]
+script = ExtResource("2_abqhh")
+health = 5
+haste = 3
+metadata/_custom_type_script = "uid://qlg6oc76b8q2"
+
+[sub_resource type="Resource" id="Resource_7n8xq"]
+script = ExtResource("4_4wlns")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4wlns"]
+albedo_color = Color(0.9, 0.8, 0.2, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_3sak2"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1bvp3"]
+
+[node name="NPC" type="CharacterBody3D" unique_id=905665313]
+script = ExtResource("1_ideak")
+stats = SubResource("Resource_rv78h")
+inventory = SubResource("Resource_7n8xq")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=929921361]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+layers = 2
+material_override = SubResource("StandardMaterial3D_4wlns")
+mesh = SubResource("CapsuleMesh_3sak2")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=474221993]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_1bvp3")

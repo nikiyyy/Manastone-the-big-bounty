@@ -7,6 +7,19 @@
 script = ExtResource("1_6rgv8")
 columns = 20
 rows = 20
+hex_size = null
+hex_gap = null
+tile_height = null
+deploy_rows = null
+movement_per_turn = null
+obstacle_density = null
+obstacle_spread = null
+max_cluster_size = null
+rough_density = null
+rough_spread = null
+max_rough_cluster = null
 projectile_scene = ExtResource("2_q7try")
+projectile_height = null
+flat_top = null
 
 [node name="Projectile" parent="." unique_id=156744680 instance=ExtResource("2_q7try")]

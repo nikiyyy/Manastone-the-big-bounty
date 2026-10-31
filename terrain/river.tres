@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="BattleTerrain" format=3 uid="uid://dmccsmb20awbh"]
+
+[ext_resource type="Script" uid="uid://fb8vanyif57i" path="res://Scripts/battle_terrain.gd" id="1_mcys0"]
+
+[resource]
+script = ExtResource("1_mcys0")
+display_name = "River"
+kind = 1
+obstacle_density = 0.03
+obstacle_spread = 0.15
+max_obstacle_cluster = 4
+metadata/_custom_type_script = "uid://fb8vanyif57i"
