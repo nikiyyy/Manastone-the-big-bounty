@@ -1,7 +1,9 @@
 [gd_resource type="Resource" script_class="BattleTerrain" format=3 uid="uid://de8673a15do46"]
 
 [ext_resource type="Script" uid="uid://fb8vanyif57i" path="res://Scripts/battle_terrain.gd" id="1_2qxlg"]
+[ext_resource type="Texture2D" uid="uid://cvbg2rum6coil" path="res://assets/Textures/grass_ground_texture.png" id="1_5to6t"]
 
 [resource]
 script = ExtResource("1_2qxlg")
+ground_texture = ExtResource("1_5to6t")
 metadata/_custom_type_script = "uid://fb8vanyif57i"

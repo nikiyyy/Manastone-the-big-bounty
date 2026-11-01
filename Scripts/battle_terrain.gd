@@ -39,9 +39,52 @@ enum Kind { SCATTER, RIVER }
 ## How often the channel wanders sideways as it crosses the map.
 @export_range(0.0, 1.0) var river_meander: float = 0.35
  
+@export_group("Obstacle props")
+## Models stood on obstacle tiles. Empty means the tiles stay bare hexes.
+@export var obstacle_props: Array[TerrainProp] = []
+## Paint obstacle tiles like ordinary ground once a model is standing on them,
+## so you don't get a black disc under every tree.
+@export var hide_obstacle_tiles: bool = true
+ 
+@export_group("Ground")
+## The flat sheet under the hexes — grass, sand, dungeon brick. Leave it empty
+## and the ground is painted in Ground Color instead.
+@export var ground_texture: Texture2D
+## Tints the texture, or is the ground outright when there isn't one.
+@export var ground_color: Color = Color(1, 1, 1)
+## How many hexes across one copy of the texture covers. Lower numbers repeat
+## more often; too low and you'll see the pattern, too high and it blurs.
+@export_range(0.5, 20.0) var ground_texture_scale: float = 4.0
+ 
 @export_group("Colours")
 @export var obstacle_color: Color = Color(0.04, 0.04, 0.05)
 @export var rough_color: Color = Color(0.18, 0.32, 0.58)
+ 
+func has_props() -> bool:
+	for p in obstacle_props:
+		if p != null and p.scene != null:
+			return true
+	return false
+ 
+ 
+## Weighted pick among the props that suit a tile with this many obstacle
+## neighbours. Null when nothing fits, which leaves the tile bare.
+func pick_obstacle_prop(neighbors: int) -> TerrainProp:
+	var fitting: Array = []
+	var total: float = 0.0
+	for p in obstacle_props:
+		if p != null and p.fits(neighbors) and p.weight > 0.0:
+			fitting.append(p)
+			total += p.weight
+	if fitting.is_empty() or total <= 0.0:
+		return null
+ 
+	var roll: float = randf() * total
+	for p in fitting:
+		roll -= p.weight
+		if roll <= 0.0:
+			return p
+	return fitting.back()
  
 # ------------------------------------------------------------------ catalogue
  

@@ -1,6 +1,13 @@
 [gd_resource type="Resource" script_class="BattleTerrain" format=3 uid="uid://bf4y2fof6afxm"]
 
+[ext_resource type="Script" uid="uid://dgrfqi0lu5yyk" path="res://Scripts/terrain_prop.gd" id="1_tclpb"]
 [ext_resource type="Script" uid="uid://fb8vanyif57i" path="res://Scripts/battle_terrain.gd" id="1_x6emq"]
+[ext_resource type="PackedScene" uid="uid://ckkksg1vqmuqu" path="res://assets/models/tree_variant1.glb" id="2_l7jql"]
+
+[sub_resource type="Resource" id="Resource_bcnls"]
+script = ExtResource("1_tclpb")
+scene = ExtResource("2_l7jql")
+metadata/_custom_type_script = "uid://dgrfqi0lu5yyk"
 
 [resource]
 script = ExtResource("1_x6emq")
@@ -9,4 +16,5 @@ obstacle_density = 0.12
 obstacle_spread = 0.0
 max_obstacle_cluster = 1
 rough_density = 0.0
+obstacle_props = Array[ExtResource("1_tclpb")]([SubResource("Resource_bcnls")])
 metadata/_custom_type_script = "uid://fb8vanyif57i"

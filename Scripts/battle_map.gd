@@ -40,7 +40,9 @@ var battle_log: BattleLog = BattleLog.new()
 var _book: CanvasLayer = null
 var _deploying: bool = false
 var _grid: MultiMeshInstance3D
-var _ground: StaticBody3D
+var _ground: StaticBody3D               # the invisible slab clicks land on
+var _ground_art: MeshInstance3D         # the sheet of grass/brick you see
+var _props: Node3D                      # trees and rocks on the obstacle tiles
 var _hud: Control = null
 var _reachable: Dictionary = {}
 var _camera: Camera3D = null
@@ -79,9 +81,17 @@ func _rebuild() -> void:
 	if _ground:
 		_ground.queue_free()
 		_ground = null
+	if _ground_art:
+		_ground_art.queue_free()
+		_ground_art = null
+	if _props:
+		_props.queue_free()
+		_props = null
 	_generate_terrain()
 	_build_ground()
+	_build_ground_art()
 	_build_grid()
+	_build_props()
  
 # ------------------------------------------------------------- hex geometry
 # Pointy-top: neighbours are left/right, rows stagger by half a tile.
@@ -242,6 +252,39 @@ func _build_ground() -> void:
 	add_child(_ground)
  
  
+## The visible ground, one flat sheet sitting just under the hexes. It's art
+## only — `_build_ground` above is what raycasts hit, and the two are kept
+## apart so changing how the map looks can't break how it's clicked.
+func _build_ground_art() -> void:
+	var t: BattleTerrain = active_terrain()
+	var s: Vector2 = _span()
+ 
+	var mesh := PlaneMesh.new()
+	# overhang, so the sheet doesn't stop exactly at the outermost hex edge
+	mesh.size = Vector2(s.x + hex_size * 4.0, s.y + hex_size * 4.0)
+ 
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = t.ground_color
+	mat.roughness = 1.0
+	mat.metallic = 0.0
+ 
+	if t.ground_texture != null:
+		mat.albedo_texture = t.ground_texture
+		mat.texture_repeat = true
+		# one copy of the texture per `ground_texture_scale` hexes, measured
+		# the same way on both axes so the image never comes out stretched
+		var world_per_copy: float = maxf(0.001, hex_size * 2.0 * t.ground_texture_scale)
+		mat.uv1_scale = Vector3(mesh.size.x / world_per_copy, mesh.size.y / world_per_copy, 1.0)
+ 
+	mesh.material = mat
+ 
+	_ground_art = MeshInstance3D.new()
+	_ground_art.mesh = mesh
+	# just under the bottom face of the tiles
+	_ground_art.position = Vector3(0.0, -tile_height * 0.5 - 0.005, 0.0)
+	add_child(_ground_art)
+ 
+ 
 func _build_grid() -> void:
 	var mesh := CylinderMesh.new()
 	mesh.radial_segments = 6
@@ -277,12 +320,72 @@ func _build_grid() -> void:
 	add_child(_grid)
  
  
+## Stand a model on every obstacle tile. Which model is the terrain's choice,
+## so a forest grows trees and a river bank grows rocks.
+func _build_props() -> void:
+	var t: BattleTerrain = active_terrain()
+	if not t.has_props():
+		return
+ 
+	_props = Node3D.new()
+	_props.name = "Props"
+	add_child(_props)
+ 
+	var tile_top: float = tile_height * 0.5
+	for h in _obstacles.keys():
+		var prop: TerrainProp = t.pick_obstacle_prop(_obstacle_neighbors(h))
+		if prop == null:
+			continue
+ 
+		var node = prop.scene.instantiate()
+		if not node is Node3D:
+			push_warning("TerrainProp: %s isn't a 3D scene." % prop.scene.resource_path)
+			node.queue_free()
+			continue
+ 
+		_props.add_child(node)
+		node.position = hex_to_local(h.x, h.y) + Vector3(0.0, tile_top + prop.y_offset, 0.0)
+		var s: float = prop.random_scale()
+		node.scale = Vector3(s, s, s)
+		if prop.random_yaw:
+			node.rotation.y = randf() * TAU
+		_mute_collision(node)
+ 
+ 
+func _obstacle_neighbors(h: Vector2i) -> int:
+	var total: int = 0
+	for n in hex_neighbors(h):
+		if _obstacles.has(n):
+			total += 1
+	return total
+ 
+ 
+## Props are scenery. A model that shipped with a collision shape would sit on
+## the world layer and swallow the clicks meant for the ground, so anything
+## solid inside one gets switched off on the way in.
+func _mute_collision(node: Node) -> void:
+	if node is CollisionObject3D:
+		node.collision_layer = 0
+		node.collision_mask = 0
+	for child in node.get_children():
+		_mute_collision(child)
+ 
+ 
 func _tile_color(col: int, row: int) -> Color:
 	var h := Vector2i(col, row)
 	if _obstacles.has(h):
-		return active_terrain().obstacle_color
+		var t: BattleTerrain = active_terrain()
+		# a model is standing here, so don't also paint a black disc under it
+		if t.hide_obstacle_tiles and t.has_props():
+			return _plain_tile_color(col, row)
+		return t.obstacle_color
 	if _rough.has(h):
 		return active_terrain().rough_color
+	return _plain_tile_color(col, row)
+ 
+ 
+## The tile with no terrain on it — deploy zones and the chequerboard.
+func _plain_tile_color(col: int, row: int) -> Color:
 	if col < deploy_rows:
 		return Color(0.24, 0.42, 0.30)
 	if col >= columns - deploy_rows:
