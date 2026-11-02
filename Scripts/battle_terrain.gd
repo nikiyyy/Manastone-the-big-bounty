@@ -42,8 +42,9 @@ enum Kind { SCATTER, RIVER }
 @export_group("Obstacle props")
 ## Models stood on obstacle tiles. Empty means the tiles stay bare hexes.
 @export var obstacle_props: Array[TerrainProp] = []
-## Paint obstacle tiles like ordinary ground once a model is standing on them,
-## so you don't get a black disc under every tree.
+## The model takes the tile's place: the hex stops being drawn and the model
+## stands on the ground sheet. Turn it off to keep the hex and stand the model
+## on top of it instead.
 @export var hide_obstacle_tiles: bool = true
  
 @export_group("Ground")

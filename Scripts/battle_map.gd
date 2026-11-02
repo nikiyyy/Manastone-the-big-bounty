@@ -308,10 +308,16 @@ func _build_grid() -> void:
 	# Flat-top needs that turned by half a segment (60/2 = 30 degrees).
 	var basis := Basis(Vector3.UP, deg_to_rad(30.0)) if flat_top else Basis()
  
+	# A MultiMesh has no way to skip an instance, so a tile that's been handed
+	# over to a model is scaled to nothing instead. It keeps its index, which
+	# is what every highlight layer addresses it by.
+	var gone := basis.scaled(Vector3.ZERO)
+ 
 	var i: int = 0
 	for row in rows:
 		for col in columns:
-			mm.set_instance_transform(i, Transform3D(basis, hex_to_local(col, row)))
+			var b: Basis = gone if _tile_replaced(Vector2i(col, row)) else basis
+			mm.set_instance_transform(i, Transform3D(b, hex_to_local(col, row)))
 			mm.set_instance_color(i, _tile_color(col, row))
 			i += 1
  
@@ -331,11 +337,14 @@ func _build_props() -> void:
 	_props.name = "Props"
 	add_child(_props)
  
-	var tile_top: float = tile_height * 0.5
 	for h in _obstacles.keys():
 		var prop: TerrainProp = t.pick_obstacle_prop(_obstacle_neighbors(h))
 		if prop == null:
 			continue
+ 
+		# standing where the tile was, so it sits on the ground sheet — or on
+		# top of the hex, if the tile is still being drawn
+		var base_y: float = -tile_height * 0.5 if _tile_replaced(h) else tile_height * 0.5
  
 		var node = prop.scene.instantiate()
 		if not node is Node3D:
@@ -344,12 +353,20 @@ func _build_props() -> void:
 			continue
  
 		_props.add_child(node)
-		node.position = hex_to_local(h.x, h.y) + Vector3(0.0, tile_top + prop.y_offset, 0.0)
+		node.position = hex_to_local(h.x, h.y) + Vector3(0.0, base_y + prop.y_offset, 0.0)
 		var s: float = prop.random_scale()
 		node.scale = Vector3(s, s, s)
 		if prop.random_yaw:
 			node.rotation.y = randf() * TAU
 		_mute_collision(node)
+ 
+ 
+## True when a model stands here in place of the hex, rather than on top of it.
+func _tile_replaced(h: Vector2i) -> bool:
+	if not _obstacles.has(h):
+		return false
+	var t: BattleTerrain = active_terrain()
+	return t.hide_obstacle_tiles and t.has_props()
  
  
 func _obstacle_neighbors(h: Vector2i) -> int:
@@ -374,11 +391,7 @@ func _mute_collision(node: Node) -> void:
 func _tile_color(col: int, row: int) -> Color:
 	var h := Vector2i(col, row)
 	if _obstacles.has(h):
-		var t: BattleTerrain = active_terrain()
-		# a model is standing here, so don't also paint a black disc under it
-		if t.hide_obstacle_tiles and t.has_props():
-			return _plain_tile_color(col, row)
-		return t.obstacle_color
+		return active_terrain().obstacle_color
 	if _rough.has(h):
 		return active_terrain().rough_color
 	return _plain_tile_color(col, row)

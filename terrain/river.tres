@@ -1,6 +1,20 @@
 [gd_resource type="Resource" script_class="BattleTerrain" format=3 uid="uid://dmccsmb20awbh"]
 
+[ext_resource type="Texture2D" uid="uid://dlkixncc3gwss" path="res://assets/Textures/grass_ground_texture.jpg" id="1_1tbv6"]
 [ext_resource type="Script" uid="uid://fb8vanyif57i" path="res://Scripts/battle_terrain.gd" id="1_mcys0"]
+[ext_resource type="Script" uid="uid://dgrfqi0lu5yyk" path="res://Scripts/terrain_prop.gd" id="2_2l2lu"]
+[ext_resource type="PackedScene" uid="uid://hpuxccpdpfkg" path="res://assets/models/rock_1.glb" id="3_k035h"]
+[ext_resource type="PackedScene" uid="uid://b3pgjb012it51" path="res://assets/models/stump.glb" id="4_ng2ue"]
+
+[sub_resource type="Resource" id="Resource_5saw3"]
+script = ExtResource("2_2l2lu")
+scene = ExtResource("3_k035h")
+metadata/_custom_type_script = "uid://dgrfqi0lu5yyk"
+
+[sub_resource type="Resource" id="Resource_8w33q"]
+script = ExtResource("2_2l2lu")
+scene = ExtResource("4_ng2ue")
+metadata/_custom_type_script = "uid://dgrfqi0lu5yyk"
 
 [resource]
 script = ExtResource("1_mcys0")
@@ -9,4 +23,6 @@ kind = 1
 obstacle_density = 0.03
 obstacle_spread = 0.15
 max_obstacle_cluster = 4
+obstacle_props = Array[ExtResource("2_2l2lu")]([SubResource("Resource_5saw3"), SubResource("Resource_8w33q")])
+ground_texture = ExtResource("1_1tbv6")
 metadata/_custom_type_script = "uid://fb8vanyif57i"

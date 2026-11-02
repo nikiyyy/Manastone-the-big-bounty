@@ -12,8 +12,11 @@ extends Resource
  
 @export_group("Variation")
 ## Each copy is scaled somewhere in this range, so they don't look stamped.
-@export_range(0.1, 3.0) var min_scale: float = 0.85
-@export_range(0.1, 3.0) var max_scale: float = 1.15
+## The range runs wide because an imported model's native size is whatever
+## the program that made it decided — fix a badly-sized one on import and
+## leave these near 1.0, or just dial in the number that looks right here.
+@export_range(0.1, 50.0, 0.05) var min_scale: float = 0.85
+@export_range(0.1, 50.0, 0.05) var max_scale: float = 1.15
 ## Spin each copy to a random angle. Turn it off for anything with a front.
 @export var random_yaw: bool = true
 ## Raise or sink the model. Use it when a model's origin isn't at its base.
