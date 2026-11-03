@@ -353,9 +353,11 @@ func _build_props() -> void:
 			continue
  
 		_props.add_child(node)
-		node.position = hex_to_local(h.x, h.y) + Vector3(0.0, base_y + prop.y_offset, 0.0)
 		var s: float = prop.random_scale()
 		node.scale = Vector3(s, s, s)
+		# the offset is multiplied by the scale, so one value lifts a model
+		# correctly whether this copy came out at 10x or at 30x
+		node.position = hex_to_local(h.x, h.y) + Vector3(0.0, base_y + prop.y_offset * s, 0.0)
 		if prop.random_yaw:
 			node.rotation.y = randf() * TAU
 		_mute_collision(node)

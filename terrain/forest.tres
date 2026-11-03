@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="BattleTerrain" format=3 uid="uid://bf4y2fof6afxm"]
 
-[ext_resource type="Texture2D" uid="uid://cvbg2rum6coil" path="res://assets/Textures/grass_ground_texture.png" id="1_l7jql"]
+[ext_resource type="Texture2D" uid="uid://dlkixncc3gwss" path="res://assets/Textures/grass_ground_texture.jpg" id="1_l7jql"]
 [ext_resource type="Script" uid="uid://dgrfqi0lu5yyk" path="res://Scripts/terrain_prop.gd" id="1_tclpb"]
 [ext_resource type="Script" uid="uid://fb8vanyif57i" path="res://Scripts/battle_terrain.gd" id="1_x6emq"]
 [ext_resource type="PackedScene" uid="uid://ckkksg1vqmuqu" path="res://assets/models/tree_variant1.glb" id="2_l7jql"]
@@ -8,8 +8,10 @@
 [sub_resource type="Resource" id="Resource_bcnls"]
 script = ExtResource("1_tclpb")
 scene = ExtResource("2_l7jql")
+weight = 0.0
 min_scale = 9.0
 max_scale = 18.0
+y_offset = 0.7
 metadata/_custom_type_script = "uid://dgrfqi0lu5yyk"
 
 [resource]

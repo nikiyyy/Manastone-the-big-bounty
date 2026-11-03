@@ -1,9 +1,18 @@
 [gd_resource type="Resource" script_class="BattleTerrain" format=3 uid="uid://de8673a15do46"]
 
 [ext_resource type="Script" uid="uid://fb8vanyif57i" path="res://Scripts/battle_terrain.gd" id="1_2qxlg"]
-[ext_resource type="Texture2D" uid="uid://cvbg2rum6coil" path="res://assets/Textures/grass_ground_texture.png" id="1_5to6t"]
+[ext_resource type="Texture2D" uid="uid://dlkixncc3gwss" path="res://assets/Textures/grass_ground_texture.jpg" id="1_5to6t"]
+[ext_resource type="Script" uid="uid://dgrfqi0lu5yyk" path="res://Scripts/terrain_prop.gd" id="2_vww3d"]
+[ext_resource type="PackedScene" uid="uid://b3pgjb012it51" path="res://assets/models/stump.glb" id="3_rqggf"]
+
+[sub_resource type="Resource" id="Resource_1tbv6"]
+script = ExtResource("2_vww3d")
+scene = ExtResource("3_rqggf")
+y_offset = 0.7
+metadata/_custom_type_script = "uid://dgrfqi0lu5yyk"
 
 [resource]
 script = ExtResource("1_2qxlg")
+obstacle_props = Array[ExtResource("2_vww3d")]([SubResource("Resource_1tbv6")])
 ground_texture = ExtResource("1_5to6t")
 metadata/_custom_type_script = "uid://fb8vanyif57i"
