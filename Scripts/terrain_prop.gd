@@ -10,6 +10,16 @@ extends Resource
 ## Relative chance against the other props that fit this tile.
 @export_range(0.0, 10.0) var weight: float = 1.0
  
+@export_group("Placement")
+## Measure the model and sit its lowest point exactly on the ground, whatever
+## its size and wherever its origin happens to be. Leave this on and you can
+## drop in any model without fiddling. Turn it off to place by hand with
+## Y Offset — worth doing for something meant to be half-buried.
+@export var snap_to_ground: bool = true
+## Nudge applied after the snap. In the model's own units and multiplied by
+## the scale, so one value holds however large a copy comes out.
+@export var y_offset: float = 0.0
+ 
 @export_group("Variation")
 ## Each copy is scaled somewhere in this range, so they don't look stamped.
 ## The range runs wide because an imported model's native size is whatever
@@ -19,10 +29,6 @@ extends Resource
 @export_range(0.1, 50.0, 0.05) var max_scale: float = 1.15
 ## Spin each copy to a random angle. Turn it off for anything with a front.
 @export var random_yaw: bool = true
-## Raise or sink the model, for when its origin isn't at its base. Measured
-## in the model's own units and multiplied by the scale, so one value holds
-## however large a copy comes out. Start at half the model's native height.
-@export var y_offset: float = 0.0
  
 @export_group("Where it grows")
 ## How many of the six neighbouring tiles must also be obstacles. The defaults

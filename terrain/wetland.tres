@@ -8,7 +8,6 @@
 [sub_resource type="Resource" id="Resource_1tbv6"]
 script = ExtResource("2_vww3d")
 scene = ExtResource("3_rqggf")
-y_offset = 0.7
 metadata/_custom_type_script = "uid://dgrfqi0lu5yyk"
 
 [resource]

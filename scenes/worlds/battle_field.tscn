@@ -7,6 +7,10 @@
 script = ExtResource("1_6rgv8")
 columns = 20
 rows = 20
+edge_color = Color(0, 0, 0, 0.8509804)
+edge_width = 0.02
+highlight_alpha = 0.25
 projectile_scene = ExtResource("2_q7try")
 
 [node name="Projectile" parent="." unique_id=156744680 instance=ExtResource("2_q7try")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)

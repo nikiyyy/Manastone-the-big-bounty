@@ -9,13 +9,11 @@
 [sub_resource type="Resource" id="Resource_5saw3"]
 script = ExtResource("2_2l2lu")
 scene = ExtResource("3_k035h")
-y_offset = 0.7
 metadata/_custom_type_script = "uid://dgrfqi0lu5yyk"
 
 [sub_resource type="Resource" id="Resource_8w33q"]
 script = ExtResource("2_2l2lu")
 scene = ExtResource("4_ng2ue")
-y_offset = 0.7
 metadata/_custom_type_script = "uid://dgrfqi0lu5yyk"
 
 [resource]
