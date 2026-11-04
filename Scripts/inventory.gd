@@ -7,6 +7,7 @@ signal inventory_changed
 const SLOT_LABELS := {
 	Item.Slot.MAIN_HAND: "Main hand",
 	Item.Slot.OFF_HAND: "Off hand",
+	Item.Slot.RANGED: "Ranged",
 	Item.Slot.HELMET: "Helmet",
 	Item.Slot.NECKLACE: "Necklace",
 	Item.Slot.TORSO: "Torso",
@@ -21,7 +22,7 @@ const SLOT_LABELS := {
 const SLOT_ORDER := [
 	Item.Slot.HELMET, Item.Slot.NECKLACE, Item.Slot.TORSO,
 	Item.Slot.HANDS, Item.Slot.FEET,
-	Item.Slot.MAIN_HAND, Item.Slot.OFF_HAND,
+	Item.Slot.MAIN_HAND, Item.Slot.OFF_HAND, Item.Slot.RANGED,
 	Item.Slot.RING_1, Item.Slot.RING_2,
 	Item.Slot.CHARM_1, Item.Slot.CHARM_2,
 ]

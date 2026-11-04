@@ -15,6 +15,12 @@ enum Slot {
 	CHARM_1,
 	CHARM_2,
 	NONE,
+	# Appended after NONE deliberately. Godot stores an enum as its number, so
+	# slotting RANGED in beside the other weapons would renumber NONE, and
+	# every consumable in the game would start thinking it was wearable. Where
+	# it sits here doesn't affect the character sheet — Inventory.SLOT_ORDER
+	# decides that.
+	RANGED,
 }
  
 enum Kind { WEAPON, ARMOR, CONSUMABLE, MISC }

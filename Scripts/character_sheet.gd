@@ -222,7 +222,9 @@ const RIGHT_SLOTS := [
 	Item.Slot.RING_1, Item.Slot.RING_2,
 	Item.Slot.CHARM_1, Item.Slot.CHARM_2,
 ]
-const HAND_SLOTS := [Item.Slot.MAIN_HAND, Item.Slot.OFF_HAND]
+## The weapon row under the paper doll. Anything added to Inventory.SLOT_ORDER
+## needs a home in one of these three lists, or it gets no cell to live in.
+const HAND_SLOTS := [Item.Slot.MAIN_HAND, Item.Slot.OFF_HAND, Item.Slot.RANGED]
 
 
 func _build_equipment_panel() -> Control:
@@ -388,6 +390,11 @@ func _refresh() -> void:
  
 	var gear: Inventory = unit.inventory if "inventory" in unit else null
 	for slot in Inventory.SLOT_ORDER:
+		# a slot with no cell laid out for it is a layout oversight, not a
+		# reason to take the whole sheet down
+		if not _slot_buttons.has(slot):
+			push_warning("CharacterSheet: no cell for slot %d — add it to one of the slot lists." % slot)
+			continue
 		_paint_cell(_slot_buttons[slot], gear.get_equipped(slot) if gear != null else null)
  
 	var pack: Inventory = _backpack()

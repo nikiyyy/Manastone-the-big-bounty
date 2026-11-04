@@ -6,7 +6,7 @@
 script = ExtResource("1_rna6c")
 display_name = "Short bow"
 kind = 0
-slot = 0
+slot = 12
 value = 40
 hands = 1
 attack = 1
