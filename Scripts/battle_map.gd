@@ -13,8 +13,8 @@ const BLAST_TINT := Color(1.15, 0.45, 0.30)
 @export var columns: int = 30
 @export var rows: int = 40
 @export var hex_size: float = 1.0
-@export var hex_gap: float = 0.06
-@export var tile_height: float = 0.15
+@export var hex_gap: float = 0.00
+@export var tile_height: float = 0.0
 @export var deploy_rows: int = 2
 @export var movement_per_turn: int = 5
  
@@ -44,6 +44,13 @@ const BLAST_TINT := Color(1.15, 0.45, 0.30)
 			_rebuild()
  
 signal deployment_ready
+signal attack_mode_changed(mode: int)
+ 
+## Which weapon the player is attacking with. The AI ignores this and picks
+## by distance; for the player it's a deliberate choice, so walking up to
+## someone with a bow drawn doesn't silently switch you to your sword.
+enum AttackMode { MELEE, RANGED }
+var attack_mode: int = AttackMode.MELEE
  
 var combat: Combat = null
 var battle_log: BattleLog = BattleLog.new()
@@ -558,7 +565,7 @@ func _finish_deployment() -> void:
 	combat.ai_phase = _run_ai_turn
 	combat.setup(_units)
  
-	_hud.bind(combat)
+	_hud.bind(combat, self)
 	_hud.unit_hovered.connect(set_portrait_hover)
 	_hud.unit_unhovered.connect(func(): set_portrait_hover(null))
  
@@ -572,6 +579,7 @@ func _finish_deployment() -> void:
 	combat.turn_changed.connect(func(_u, round_number, _p):
 		battle_log.rounds = round_number
 		cancel_targeting()
+		_settle_attack_mode()
 		if _book != null:
 			_book.close()
 		_refresh_preview()
@@ -892,13 +900,25 @@ func _equipped_weapon(unit, slot: int) -> Item:
 	return item if item != null and item.is_weapon() else null
  
  
-## Which weapon this particular swing uses. Standing next to someone means the
-## melee weapon if there is one; anything further off reaches for the bow.
-## Carrying both is then worth doing, which is the point of the second slot.
+## The weapon the player's chosen stance calls for — null for anyone the
+## player isn't driving, and for a stance with nothing equipped to fill it.
+func _stance_weapon(unit) -> Item:
+	if unit == null or unit != get_controlled_unit():
+		return null
+	var slot: int = Item.Slot.RANGED if attack_mode == AttackMode.RANGED else Item.Slot.MAIN_HAND
+	return _equipped_weapon(unit, slot)
+ 
+ 
+## Which weapon this particular swing uses. The player's stance decides it;
+## the AI falls back on distance — next to someone it swings, further off it
+## shoots.
 func _weapon_for(unit, distance: int) -> Item:
+	var chosen: Item = _stance_weapon(unit)
+	if chosen != null:
+		return chosen
+ 
 	var melee: Item = _equipped_weapon(unit, Item.Slot.MAIN_HAND)
 	var ranged: Item = _equipped_weapon(unit, Item.Slot.RANGED)
- 
 	if distance <= 1 and melee != null:
 		return melee
 	if ranged != null:
@@ -906,14 +926,64 @@ func _weapon_for(unit, distance: int) -> Item:
 	return melee
  
  
-## Furthest hex this unit can strike at all, across both weapons.
+## Furthest hex this unit can strike at. In a melee stance that's one hex even
+## with a bow on your back, which is what makes the stance mean something.
 func _max_range_of(unit) -> int:
+	var chosen: Item = _stance_weapon(unit)
+	if chosen != null:
+		return chosen.max_range()
+ 
 	var best: int = 1
 	for slot in [Item.Slot.MAIN_HAND, Item.Slot.RANGED]:
 		var weapon: Item = _equipped_weapon(unit, slot)
 		if weapon != null:
 			best = maxi(best, weapon.max_range())
 	return best
+ 
+ 
+# ------------------------------------------------------- what the HUD asks for
+ 
+func has_ranged_weapon(unit) -> bool:
+	return unit != null and _equipped_weapon(unit, Item.Slot.RANGED) != null
+ 
+ 
+func set_attack_mode(mode: int) -> void:
+	if mode == AttackMode.RANGED and not has_ranged_weapon(get_controlled_unit()):
+		return
+	if attack_mode == mode:
+		return
+	attack_mode = mode
+	cancel_targeting()
+	attack_mode_changed.emit(attack_mode)
+ 
+ 
+## Drop back to melee when the unit taking over has nothing to shoot with.
+func _settle_attack_mode() -> void:
+	if attack_mode == AttackMode.RANGED and not has_ranged_weapon(get_controlled_unit()):
+		attack_mode = AttackMode.MELEE
+		attack_mode_changed.emit(attack_mode)
+ 
+ 
+func controlled_spells() -> Array:
+	var caster = get_controlled_unit()
+	return _spells_of(caster) if caster != null else []
+ 
+ 
+## Everything drinkable or throwable the controlled unit is carrying.
+func controlled_consumables() -> Array:
+	var out: Array = []
+	var unit = get_controlled_unit()
+	if unit == null or not "inventory" in unit or unit.inventory == null:
+		return out
+	for item in unit.inventory.items:
+		if item != null and item.is_consumable():
+			out.append(item)
+	return out
+ 
+ 
+## Start aiming the spell in a hotbar slot. Same path the spell book uses.
+func cast_spell_slot(index: int) -> void:
+	_try_begin_targeting(index)
  
  
 func _face_unit(unit, target) -> void:
