@@ -13,8 +13,8 @@ const BLAST_TINT := Color(1.15, 0.45, 0.30)
 @export var columns: int = 30
 @export var rows: int = 40
 @export var hex_size: float = 1.0
-@export var hex_gap: float = 0.00
-@export var tile_height: float = 0.0
+@export var hex_gap: float = 0.06
+@export var tile_height: float = 0.15
 @export var deploy_rows: int = 2
 @export var movement_per_turn: int = 5
  
@@ -46,11 +46,21 @@ const BLAST_TINT := Color(1.15, 0.45, 0.30)
 signal deployment_ready
 signal attack_mode_changed(mode: int)
  
-## Which weapon the player is attacking with. The AI ignores this and picks
-## by distance; for the player it's a deliberate choice, so walking up to
-## someone with a bow drawn doesn't silently switch you to your sword.
+## Which weapon a unit is attacking with. The AI ignores this and picks by
+## distance; for the player it's a deliberate choice, so walking up to someone
+## with a bow drawn doesn't silently switch you to your sword.
+##
+## Held per unit, because the party shares one battle map but not one stance:
+## an archer and a swordsman take turns one after the other, and neither
+## should be reset by the other taking their turn.
 enum AttackMode { MELEE, RANGED }
-var attack_mode: int = AttackMode.MELEE
+ 
+var _attack_modes: Dictionary = {}     # unit -> AttackMode
+ 
+## Read-only view for the HUD: the stance of whoever's being controlled.
+var attack_mode: int:
+	get:
+		return mode_for(get_controlled_unit())
  
 var combat: Combat = null
 var battle_log: BattleLog = BattleLog.new()
@@ -905,7 +915,7 @@ func _equipped_weapon(unit, slot: int) -> Item:
 func _stance_weapon(unit) -> Item:
 	if unit == null or unit != get_controlled_unit():
 		return null
-	var slot: int = Item.Slot.RANGED if attack_mode == AttackMode.RANGED else Item.Slot.MAIN_HAND
+	var slot: int = Item.Slot.RANGED if mode_for(unit) == AttackMode.RANGED else Item.Slot.MAIN_HAND
 	return _equipped_weapon(unit, slot)
  
  
@@ -947,21 +957,36 @@ func has_ranged_weapon(unit) -> bool:
 	return unit != null and _equipped_weapon(unit, Item.Slot.RANGED) != null
  
  
+## This unit's stance, falling back to melee if they've no bow to draw —
+## worked out on the way out rather than stored, so losing a weapon can't
+## leave a stale stance behind.
+func mode_for(unit) -> int:
+	if unit == null:
+		return AttackMode.MELEE
+	var mode: int = _attack_modes.get(unit, AttackMode.MELEE)
+	if mode == AttackMode.RANGED and not has_ranged_weapon(unit):
+		return AttackMode.MELEE
+	return mode
+ 
+ 
 func set_attack_mode(mode: int) -> void:
-	if mode == AttackMode.RANGED and not has_ranged_weapon(get_controlled_unit()):
+	var unit = get_controlled_unit()
+	if unit == null:
 		return
-	if attack_mode == mode:
+	if mode == AttackMode.RANGED and not has_ranged_weapon(unit):
 		return
-	attack_mode = mode
+	if mode_for(unit) == mode:
+		return
+ 
+	_attack_modes[unit] = mode
 	cancel_targeting()
-	attack_mode_changed.emit(attack_mode)
+	attack_mode_changed.emit(mode)
  
  
-## Drop back to melee when the unit taking over has nothing to shoot with.
+## Nothing to reset any more — each unit keeps its own stance. The HUD just
+## needs telling that the unit under the cursor has changed.
 func _settle_attack_mode() -> void:
-	if attack_mode == AttackMode.RANGED and not has_ranged_weapon(get_controlled_unit()):
-		attack_mode = AttackMode.MELEE
-		attack_mode_changed.emit(attack_mode)
+	attack_mode_changed.emit(mode_for(get_controlled_unit()))
  
  
 func controlled_spells() -> Array:
@@ -1004,6 +1029,7 @@ func unit_has_stat(unit) -> bool:
 func _on_unit_died(unit) -> void:
 	print("%s is down." % _name_of(unit))
 	_hexes.erase(unit)
+	_attack_modes.erase(unit)
 	if _hover_unit == unit:
 		_hover_unit = null
 		_portrait_hover = null

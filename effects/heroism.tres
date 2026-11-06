@@ -4,8 +4,5 @@
 
 [resource]
 script = ExtResource("1_c6ijj")
-display_name = "G"
-modifiers = {
-"strength": 100
-}
-mode = 1
+display_name = "Heroism"
+amount = 100
