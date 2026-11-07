@@ -15,6 +15,7 @@
 [ext_resource type="PackedScene" uid="uid://btcljsfubtwss" path="res://scenes/codex_ui.tscn" id="13_trceg"]
 [ext_resource type="Resource" uid="uid://cjvdhk0o6r54x" path="res://codex/book.tres" id="14_a8y0u"]
 [ext_resource type="Script" uid="uid://bwfjt7hy2ated" path="res://Scripts/quest_ui.gd" id="15_jkv2x"]
+[ext_resource type="Script" uid="uid://cyywi8emh8kpd" path="res://Scripts/main_menu.gd" id="16_jbj1t"]
 
 [node name="Main" type="Node3D" unique_id=1098384311]
 script = ExtResource("1_tefeu")
@@ -54,3 +55,7 @@ book = ExtResource("14_a8y0u")
 
 [node name="QuestUI" type="CanvasLayer" parent="." unique_id=1026267611]
 script = ExtResource("15_jkv2x")
+
+[node name="MainMenu" type="CanvasLayer" parent="." unique_id=1532876020]
+script = ExtResource("16_jbj1t")
+world_scene = "uid://b2arnwiy3srhv"

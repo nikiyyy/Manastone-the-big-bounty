@@ -13,8 +13,8 @@ const BLAST_TINT := Color(1.15, 0.45, 0.30)
 @export var columns: int = 30
 @export var rows: int = 40
 @export var hex_size: float = 1.0
-@export var hex_gap: float = 0.06
-@export var tile_height: float = 0.15
+@export var hex_gap: float = 0
+@export var tile_height: float = 0
 @export var deploy_rows: int = 2
 @export var movement_per_turn: int = 5
  
