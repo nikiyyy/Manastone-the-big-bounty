@@ -63,6 +63,9 @@ dialogue = ExtResource("3_tn3yd")
 display_name = "Bellona"
 inventory = SubResource("Resource_tn3yd")
 base_resistances = SubResource("Resource_3evjc")
+model_scale = null
+model_rotation_degrees = null
+model_y_offset = null
 
 [node name="NPC" parent="NPC" unique_id=1900716751 instance=ExtResource("2_fwfmv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7534189, 0.10000038, -5.2703304)
@@ -72,6 +75,9 @@ display_name = "Myra"
 character_class = ExtResource("6_la4ba")
 inventory = SubResource("Resource_wrdim")
 base_resistances = SubResource("Resource_i3btg")
+model_scale = null
+model_rotation_degrees = null
+model_y_offset = null
 
 [node name="NPC2" parent="." unique_id=1283164643 instance=ExtResource("2_fwfmv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2593198, 0.09999943, 7.078424)
@@ -81,6 +87,9 @@ is_merchant = true
 display_name = "merchant"
 inventory = SubResource("Resource_n7nbc")
 base_resistances = SubResource("Resource_au5ld")
+model_scale = null
+model_rotation_degrees = null
+model_y_offset = null
 
 [node name="NPC3" parent="." unique_id=677490741 instance=ExtResource("2_fwfmv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.382188, 0.10000038, 4.5300207)
@@ -91,6 +100,9 @@ stats = SubResource("Resource_m22rl")
 character_class = ExtResource("8_r30v4")
 inventory = SubResource("Resource_sl2hr")
 base_resistances = SubResource("Resource_qdm4t")
+model_scale = null
+model_rotation_degrees = null
+model_y_offset = null
 
 [node name="PlayerSpawn" type="Marker3D" parent="." unique_id=383359081]
 

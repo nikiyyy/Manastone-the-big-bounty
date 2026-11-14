@@ -29,6 +29,20 @@ extends Resource
 ## Overrides npc.tscn when this archetype gets its own model.
 @export_file("*.tscn") var scene_override: String = ""
 
+## Art only — the unit stays a normal NPC and its coloured capsule is simply
+## hidden in favour of this. Leave it empty and the capsule is used, so an
+## archetype with no art yet still shows up. Use scene_override instead only
+## when the whole NPC scene needs to differ, not just how it looks.
+@export var model: PackedScene
+## Imported models arrive at whatever size the program that made them chose,
+## so this range runs wide.
+@export_range(0.05, 50.0, 0.05) var model_scale: float = 1.0
+## Turns the model on the spot. Y straightens a model whose front doesn't face
+## the way the unit walks; X and Z stand up one that was exported lying down.
+@export var model_rotation_degrees: Vector3 = Vector3.ZERO
+## Nudge up or down after the automatic drop to ground level.
+@export var model_y_offset: float = 0.0
+
 
 func roll_gold() -> int:
 	if gold_max <= gold_min:
@@ -51,4 +65,8 @@ func to_member(index: int) -> Dictionary:
 		"xp_reward": xp_reward,
 		"gold": roll_gold(),
 		"scene_override": scene_override,
+		"model": model,
+		"model_scale": model_scale,
+		"model_rotation_degrees": model_rotation_degrees,
+		"model_y_offset": model_y_offset,
 	}
