@@ -43,6 +43,13 @@ extends Resource
 ## Nudge up or down after the automatic drop to ground level.
 @export var model_y_offset: float = 0.0
 
+## How high the model hops as it walks, as a fraction of its own height.
+## 0 glides instead.
+@export_range(0.0, 0.5, 0.005) var model_hop_height: float = 0.08
+## Ground covered per hop. At the distance between two hex centres, the unit
+## lands once on every tile it crosses.
+@export_range(0.1, 10.0, 0.05) var model_hop_distance: float = 1.73
+
 
 func roll_gold() -> int:
 	if gold_max <= gold_min:
@@ -69,4 +76,6 @@ func to_member(index: int) -> Dictionary:
 		"model_scale": model_scale,
 		"model_rotation_degrees": model_rotation_degrees,
 		"model_y_offset": model_y_offset,
+		"model_hop_height": model_hop_height,
+		"model_hop_distance": model_hop_distance,
 	}

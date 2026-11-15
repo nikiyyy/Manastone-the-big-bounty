@@ -48,10 +48,22 @@ signal talents_changed
 ## Nudge up or down after the automatic drop to ground level.
 @export var model_y_offset: float = 0.0
 
+## How high the model hops as it walks, as a fraction of its own height — so
+## it reads the same whether the model is knee-high or enormous. 0 glides.
+@export_range(0.0, 0.5, 0.005) var model_hop_height: float = 0.08
+## Ground covered per hop. Set it to the distance between two hex centres and
+## the unit lands once on every tile it crosses.
+@export_range(0.1, 10.0, 0.05) var model_hop_distance: float = 1.73
+
 var current_health: int = 0
 var current_mana: int = 0
 var effects: EffectHolder = EffectHolder.new()
 var _model_instance: Node3D = null
+var _model_rest_y: float = 0.0     # where the model sits between hops
+var _model_height: float = 0.0     # measured once, so the hop scales with it
+var _walked: float = 0.0           # ground covered, which is what drives the hop
+var _hop: float = 0.0
+var _last_ground_pos: Vector3 = Vector3.ZERO
 
 ## Talent display_name -> ranks taken.
 var talent_ranks: Dictionary = {}
@@ -108,7 +120,15 @@ func apply_model() -> void:
 	var s: float = maxf(0.01, model_scale)
 	node.scale = Vector3(s, s, s)
 	node.rotation_degrees = model_rotation_degrees
-	node.position = Vector3(0.0, -_model_bottom(node) + model_y_offset, 0.0)
+
+	var box: AABB = _model_bounds(node)
+	_model_height = box.size.y
+	_model_rest_y = -box.position.y + model_y_offset
+	node.position = Vector3(0.0, _model_rest_y, 0.0)
+
+	_walked = 0.0
+	_hop = 0.0
+	_last_ground_pos = global_position
 	_mute_model_collision(node)
 
 
@@ -118,21 +138,57 @@ func _show_capsule(visible_now: bool) -> void:
 			child.visible = visible_now
 
 
-## How far the model's lowest point sits below the unit's own origin, with its
-## scale already applied. Subtracting it puts the model's feet on the ground
-## wherever the artist left the origin, at any size.
-func _model_bottom(node: Node3D) -> float:
+## Hops the model along as the unit walks, landing once per tile crossed.
+##
+## Driven by ground covered rather than by a clock, which is what ties the
+## landings to the hexes instead of to time — so a hasted unit takes the same
+## hops faster, and nothing here has to know about waypoints or pathfinding.
+func _process(delta: float) -> void:
+	if Engine.is_editor_hint() or _model_instance == null:
+		return
+	if not is_instance_valid(_model_instance):
+		_model_instance = null
+		return
+
+	if model_hop_height <= 0.0 or _model_height <= 0.0 or not is_alive():
+		_model_instance.position.y = _model_rest_y
+		return
+
+	var here: Vector3 = global_position
+	var moved: float = Vector2(here.x - _last_ground_pos.x, here.z - _last_ground_pos.z).length()
+	_last_ground_pos = here
+
+	var peak: float = _model_height * model_hop_height
+	if moved > 0.0005:
+		_walked += moved
+		# half a sine per hop: up from the tile it left, down onto the next
+		_hop = absf(sin(_walked / maxf(0.01, model_hop_distance) * PI)) * peak
+	else:
+		# stopping mid-stride shouldn't drop the model through the floor
+		_hop = move_toward(_hop, 0.0, delta * peak * 5.0)
+		if _hop <= 0.0:
+			_walked = 0.0        # next move starts from a standing position
+
+	_model_instance.position.y = _model_rest_y + _hop
+
+
+## The model's box in the unit's own space, with scale and rotation applied.
+## Its bottom is how far to drop the model so its feet reach the ground, and
+## its height is what the hop is measured against.
+func _model_bounds(node: Node3D) -> AABB:
 	var meshes: Array = []
 	_collect_meshes(node, meshes)
 	if meshes.is_empty():
-		return 0.0
+		return AABB()
 
 	var into_unit: Transform3D = global_transform.affine_inverse()
-	var lowest: float = INF
+	var total: AABB = AABB()
+	var first: bool = true
 	for mi in meshes:
 		var box: AABB = into_unit * mi.global_transform * mi.get_aabb()
-		lowest = minf(lowest, box.position.y)
-	return 0.0 if lowest == INF else lowest
+		total = box if first else total.merge(box)
+		first = false
+	return total
 
 
 func _collect_meshes(node: Node, into: Array) -> void:
@@ -420,6 +476,8 @@ func to_unit_data() -> Dictionary:
 		"model_scale": model_scale,
 		"model_rotation_degrees": model_rotation_degrees,
 		"model_y_offset": model_y_offset,
+		"model_hop_height": model_hop_height,
+		"model_hop_distance": model_hop_distance,
 	}
 
 

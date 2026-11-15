@@ -13,8 +13,8 @@ const BLAST_TINT := Color(1.15, 0.45, 0.30)
 @export var columns: int = 30
 @export var rows: int = 40
 @export var hex_size: float = 1.0
-@export var hex_gap: float = 0.06
-@export var tile_height: float = 0.15
+@export var hex_gap: float = 0
+@export var tile_height: float = 0
 @export var deploy_rows: int = 2
 @export var movement_per_turn: int = 5
 
@@ -688,6 +688,10 @@ func _spawn_unit(data: Dictionary, at: Vector2i, faction: int):
 		unit.model_scale = data.get("model_scale", 1.0)
 		unit.model_rotation_degrees = data.get("model_rotation_degrees", Vector3.ZERO)
 		unit.model_y_offset = data.get("model_y_offset", 0.0)
+		unit.model_hop_height = data.get("model_hop_height", unit.model_hop_height)
+		# the map knows its own hex spacing, so a template that hasn't been
+		# tuned still lands once per tile
+		unit.model_hop_distance = data.get("model_hop_distance", hex_size * sqrt(3.0))
 		unit.apply_model()
 
 	unit.set_meta("xp_reward", data.get("xp_reward", 0))
